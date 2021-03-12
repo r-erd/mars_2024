@@ -12,6 +12,7 @@ class mainScene {
     //TODO add new physics / acc settings
     //TODO add higher speed -> less left/right tilting ??
     //TODO add mars at 1000 - land there ->  success  + sky gradient to yellowish grey + less asteroids on approach
+    //TODO dont allow negative acceleration, only positive thrust!
 
     //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
@@ -21,6 +22,12 @@ class mainScene {
     //TODO position explosion particle origin 
     //TODO dont follow the x-axis of the floor (dust emitter)
       //add sprite that is always in the x-center but moves y-axis and follow this one instead of floor
+
+    //TODO fix speed text display position
+    //TODO fix turbolences
+
+    //TODO make sound and particle effects dependent on thrust, not acceleration 
+    //TODO rework UI to display thurst in percent, not acceleration
 
     // ================= OTHER
     //TODO embed in website
@@ -58,6 +65,7 @@ class mainScene {
 
     create() {
 
+      this.acceleration = 0
       this.random = Math.random()
       this.eggOne = false;
       this.eggTwo = false;
@@ -200,7 +208,7 @@ class mainScene {
       let style = { font: '20px Arial', fill: '#ffffff' };
       let style2 = { font: '30px Arial', fill: '#ffffff' };
 
-      this.thrust = 0;
+      this.force = 0;
       this.distanceY = 0;
       this.distanceX = 0;
       this.angle = 0;
@@ -208,13 +216,13 @@ class mainScene {
       this.seconds = 0
       this.minutes = 0
       this.velocityX = 0;
-      this.velocityY = 0;
       this.positionYold = 0
       this.positionXold = 0
 
       this.highscoreText = this.add.text(20, 20, 'Highscore: ' + Math.floor(highscore), style);
-      this.thrustText = this.add.text(72, 700, this.thrust, style);
-      this.speed = this.add.text(173, 700, 0, style);
+      this.debugText = this.add.text(20, 40, + Math.floor(highscore), style);
+      this.thrustText = this.add.text(72, 700, this.acceleration, style);
+      this.speedText = this.add.text(173, 700, this.force, style);
       this.distanceYText = this.add.text(273, 700, 0, style);
       this.tplus = this.add.text(520, 750, "T+00:00:00", style2);
       this.tplus.setDepth(4)  
@@ -247,6 +255,12 @@ class mainScene {
 
     update() {
 
+      this.debugText.setText(this.boosterSound.volume)
+      this.speedText.setText(Math.round(this.force));
+      this.thrustText.setText(Math.round(this.acceleration * 100))
+
+      this.force += this.acceleration/10
+
       ///garbage collection (far away asteroids)
       this.asteroids.children.each( function(p){
         if(p.y > 1700 && p.active){
@@ -259,9 +273,15 @@ class mainScene {
       
       //================== LOW HEIGHT CHECKS
 
+      if(this.distanceY < 20 && this.distanceY != 0){
+        if(this.acceleration > -0.5){
+          this.acceleration -= (20 - this.distanceY)/20 * 0.003
+        }
+      }
+
       if(this.distanceY < 100){
         this.soundManager()
-        this.addTurbolences()
+        //this.addTurbolences()
         this.checkLanded()
         this.checkAirspaceBounds()
         this.setDustEmitterCheck()
@@ -281,12 +301,6 @@ class mainScene {
 
       this.roadsterEgg()
 
-
-
-      
-      
-
-
       //======================================   UI-Management
       this.handleTimeText()
       this.setCursorPosition()
@@ -304,19 +318,17 @@ class mainScene {
       if(this.rkey.isDown)
         this.restart()
 
-      if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.velocityY <=  0.5){
-        this.velocityY += 0.05
+      if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive){
+        this.acceleration -= 0.005
         //decrease thrust
-        this.force = -1 * Math.round(this.velocityY * 100)
-        this.thrustText.setText(this.force );
+
       }
 
-      if(this.arrow.up.isDown && this.alive  && this.velocityY > -9.9){
+      if(this.arrow.up.isDown && this.alive){
         this.started = true
-        this.velocityY -= 0.05
+        this.acceleration += 0.005
         //increase thrust
-        this.force = -1 * Math.round(this.velocityY * 100)
-        this.thrustText.setText(this.force );
+
       }
 
       if(this.arrow.right.isDown && this.distanceY > 0){
@@ -472,13 +484,13 @@ class mainScene {
         console.log(this.rocket.angle)
       }
 
-      if ((this.distanceY > 0.6 || this.force == 0 ) && this.dust == true) {
+      if ((this.distanceY > 0.6 || Math.round(100* this.acceleration) == 0 ) && this.dust == true) {
         this.dust_emitter.on = false;
         this.gdust_emitter.on = false;
         this.dust = false
       }
 
-      if(this.distanceY < 0.8 && this.force != 0 && this.dust == false){
+      if(this.distanceY < 0.8 && Math.round(100* this.acceleration) != 0 && this.dust == false){
         this.dust_emitter.on = true;
         this.gdust_emitter.on = true;
         this.dust = true
@@ -537,10 +549,10 @@ class mainScene {
     }
 
     setPropulsionEmitterState(){
-      if(this.force == 0 && this.propulsion_emitter.on == true)
+      if(Math.round(this.acceleration * 100) == 0 && this.propulsion_emitter.on == true)
         this.propulsion_emitter.on = false
     
-      if (this.force != 0 && this.propulsion_emitter.on == false)
+      if (Math.round(this.acceleration * 100) != 0 && this.propulsion_emitter.on == false)
         this.propulsion_emitter.on = true
     }
 
@@ -680,9 +692,10 @@ class mainScene {
       }
       if(this.distanceY < 0){
         this.force = 0
-        this.velocityY = 0
+        this.distanceY = 0
+        this.acceleration = 0
         this.velocityX = 0
-        this.thrustText.setText(this.force);
+        this.speedText.setText(this.force);
       }
     }
 
@@ -717,6 +730,7 @@ class mainScene {
       this.spaceshipSound.stop()
       this.boosterSound.stop()
       this.force = 0
+      this.acceleration = 0
       this.alive = true;
       this.distanceY = 0
       this.speedY = 0
@@ -725,7 +739,7 @@ class mainScene {
 
     addTurbolences(){
       if(this.distanceY < 40 && this.distanceY != 0){
-        this.thrust += this.lookup()
+        this.force += this.lookup()
 
         if(this.lookup() >= 0.5){
           this.speedX -= this.lookup()*3
@@ -741,11 +755,11 @@ class mainScene {
 
     soundManager(){
 
-      if (this.force == 0)
+      if (this.acceleration == 0)
         this.boosterSound.volume = 0
 
-      if (this.force < 1000 && this.distanceY < 50 && this.running && this.alive)
-        this.boosterSound.volume = Math.abs(this.force) / 1000
+      if (Math.round(this.acceleration*100) < 100  && this.distanceY < 50 && this.running && this.alive)
+        this.boosterSound.volume = Math.abs(100* this.acceleration)/100
 
 
       if(!this.boosterSound.isPlaying && this.distanceY < 50 && this.alive){

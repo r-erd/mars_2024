@@ -7,27 +7,21 @@ var highscore = 0;
 class mainScene {
 
 
-    //TODO add tunnel boring machine
-
-    //TODO add very small chance of spotting the tesla in the spaces
-    //TODO add very small chance of spotting an angle in the sky
-
+    //TODO ========== FEATURES TO IMPLEMENT =================
+    //TODO add tunnel boring machine#    
+    //TODO add angle of dust cloud matching rocket angle
+    //TODO add new physics / acc settings
+    //TODO add higher speed -> less left/right tilting
     //TODO add mars at 1000 - land there ->  success  + sky gradient to yellowish grey + less asteroids on approach
 
+    //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
     //TODO explosion sound sounds twice when asteroid is hit (on respawn again)
     //TODO fix hitbox of the asteroids?!
     //TODO clouds spawn mid screen (left and right spawns)
     //TODO position explosion particle origin 
 
-    //TODO add angle of dust cloud matching rocket angle
-
-    //TODO add rotation back to the sats
-
-    //TODO add new physics / acc settings
-    //TODO add higher speed -> less left/right tilting
-
-  
+    // ================= OTHER
     //TODO embed in website
     //TODO add skin selection / game mode (agility vs speed)
     //TODO add crypto mode
@@ -56,11 +50,15 @@ class mainScene {
       this.load.image('starlink', 'assets/starlink.png');
       this.load.image('cursor', 'assets/cursor.png');
       this.load.image('cloud', 'assets/cloud.png');
+      this.load.image('blackbird', 'assets/blackbird.png');
+      this.load.image('spacetesla', 'assets/spacetesla.png');
 
     }
 
     create() {
 
+      this.eggOne = false;
+      this.eggTwo = false;
       this.i=1e6
 
       this.lookupTable = []
@@ -85,8 +83,7 @@ class mainScene {
       this.cursor.setOrigin(0,17);
       this.cursor.angle = -60
 
-      this.buildings = this.physics.add.sprite(601, 565, 'buildings');
-    
+      this.buildings = this.physics.add.sprite(601, 565, 'buildings');  
 
       this.background.setTint(0x5ccbff)
 
@@ -266,6 +263,7 @@ class mainScene {
         this.checkLanded()
         this.checkAirspaceBounds()
         this.setDustEmitterCheck()
+        this.blackbirdEgg()
 
         if(this.distanceY > 0.5 && this.fog == true ){
           this.o2_emitter.stop()
@@ -285,6 +283,7 @@ class mainScene {
 
       this.setPropulsionEmitterState()
 
+      this.roadsterEgg()
 
 
 
@@ -473,6 +472,32 @@ class mainScene {
         this.gdust_emitter.on = false;
         this.dust = false
       }
+    }
+
+    blackbirdEgg(){
+      if(this.eggOne == true)
+        this.blackbird.body.velocity.y = this.speedY
+
+      if(this.distanceY > 30 && this.distanceY < 40 && this.eggOne == false && Math.random() < 0.001){
+        this.blackbird = this.physics.add.sprite(1300, 0, 'blackbird');
+        console.log("spawned blackbird")
+        this.blackbird.body.velocity.x = -300
+        this.blackbird.body.velocity.y = this.speedY
+        this.eggOne = true
+      }
+    }
+
+
+    roadsterEgg(){
+      if(this.distanceY > 0 && this.eggTwo == false && Math.random() < 0.0001){
+        this.spacetesla = this.physics.add.sprite(450, -250, 'spacetesla');
+        this.asteroids.add(this.spacetesla)
+        this.spacetesla.body.velocity.y = this.speedY 
+        this.spacetesla.body.velocity.x = this.speedX
+        console.log("spawned spacetesla")
+        this.eggTwo = true
+      }
+
     }
 
     setAltitudePositions(){

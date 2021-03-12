@@ -1,5 +1,6 @@
-var highscore = 0;
 
+
+var highscore = 0;
 //restart on r
 //fly with arrow keys
 
@@ -7,12 +8,15 @@ var highscore = 0;
 class mainScene {
 
 
-    //TODO ========== FEATURES TO IMPLEMENT =================
-    //TODO add tunnel boring machine#    
-    //TODO add new physics / acc settings
-    //TODO add higher speed -> less left/right tilting ??
+    //============== FEATURES TO IMPLEMENT =================
+
     //TODO add mars at 1000 - land there ->  success  + sky gradient to yellowish grey + less asteroids on approach
-    //TODO dont allow negative acceleration, only positive thrust!
+
+    //TODO add higher speed -> less left/right tilting ??
+    //TODO add gravity
+    //TODO add trägheit
+    //TODO maybe add limited fuel and refueling in sky (meet other starship in orbit back to back)
+    //TODO add crash to ground detection (max speed requirement)
 
     //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
@@ -20,24 +24,19 @@ class mainScene {
     //TODO fix hitbox of the asteroids?!
     //TODO clouds spawn mid screen (left and right spawns)
     //TODO position explosion particle origin 
-    //TODO dont follow the x-axis of the floor (dust emitter)
-      //add sprite that is always in the x-center but moves y-axis and follow this one instead of floor
-
-    //TODO fix speed text display position
-    //TODO fix turbolences
-
-    //TODO make sound and particle effects dependent on thrust, not acceleration 
-    //TODO rework UI to display thurst in percent, not acceleration
+    //TODO shake position instead of shake camera? dont know
+    //TODO fix ground hitbox (raise actual ground, not buildings, fix rocket hitbox (tip))
 
     // ================= OTHER
     //TODO embed in website
     //TODO add skin selection / game mode (agility vs speed)
     //TODO add crypto mode
+    //TODO replace skins with selfmade skins (rocket, asteroids, clouds, blackbird, spacetesla, boringmachine)
+    //TODO add credits for sound (zappsplat)
 
 
 
     preload() {
-
       this.load.image('rocket', 'assets/rocket.png');
       this.load.image('starship', 'assets/starship.png');
       this.load.image('deathscreen', 'assets/deathscreen.png');
@@ -60,20 +59,31 @@ class mainScene {
       this.load.image('cloud', 'assets/cloud.png');
       this.load.image('blackbird', 'assets/blackbird.png');
       this.load.image('spacetesla', 'assets/spacetesla.png');
+      this.load.image('boring', 'assets/boringmachine.png');
 
     }
 
     create() {
 
       this.acceleration = 0
+      this.boring = false
       this.random = Math.random()
       this.eggOne = false;
       this.eggTwo = false;
       this.i=1e6
 
+
       this.lookupTable = []
       for (this.i, this.i > 0; this.i--;) {
         this.lookupTable.push(Math.random());
+      }
+
+
+      if(this.lookup() < 0.2){
+        this.boringmachine = this.physics.add.sprite(2710, 745, 'boring'); 
+        this.boringmachine.body.velocity.x = -1
+        this.boringmachine.setDepth(2)
+        this.boring = true
       }
 
 
@@ -82,9 +92,9 @@ class mainScene {
       this.started = false
       this.debug = false
       this.dust = false
-      this.background = this.add.tileSprite(600, 420, 1200, 850, 'light');
+      this.background = this.add.tileSprite(600, 420, 1250, 850, 'light');
       this.physics.add.existing(this.background, true);
-      this.background = this.add.tileSprite(600, 420, 1200, 850, 'light');
+      this.background = this.add.tileSprite(600, 420, 1250, 850, 'light');
 
       this.floor = this.physics.add.sprite(600, 715, 'floor');
       this.overlay = this.add.sprite(600, 400, 'overlay');
@@ -93,7 +103,8 @@ class mainScene {
       this.cursor.setOrigin(0,17);
       this.cursor.angle = -60
 
-      this.buildings = this.physics.add.sprite(601, 565, 'buildings');  
+      this.buildings = this.physics.add.sprite(601, 565, 'buildings');   
+      this.center_particle = this.physics.add.sprite(600,710)
 
       this.background.setTint(0x5ccbff)
 
@@ -123,12 +134,10 @@ class mainScene {
       this.boosterSound.stop()
 
 
-
       this.rocket = this.physics.add.sprite(600, 610, 'starship');
       this.rocket.body.setSize(17,67,true); //hitbox
       this.rocket.setOrigin(0.5,1)
       this.rocket.setDepth(1)
-
       this.o2EmitterInit()
 
 
@@ -149,7 +158,7 @@ class mainScene {
         x: {min: -50, max: 50 },
         });
       sand_particles.setDepth(2)
-      this.dust_emitter.startFollow(this.floor,0,-90,false)
+      this.dust_emitter.startFollow(this.center_particle,0,-90,false)
 
       var grey_particles = this.add.particles("grey_particle");
       this.gdust_emitter = grey_particles.createEmitter({
@@ -168,7 +177,7 @@ class mainScene {
         x: {min: -50, max: 50 },
         });
       sand_particles.setDepth(2)
-      this.gdust_emitter.startFollow(this.floor,0,-100,false)
+      this.gdust_emitter.startFollow(this.center_particle,0,-100,false)
       
 
 
@@ -218,6 +227,7 @@ class mainScene {
       this.velocityX = 0;
       this.positionYold = 0
       this.positionXold = 0
+      this.thrust = 0
 
       this.highscoreText = this.add.text(20, 20, 'Highscore: ' + Math.floor(highscore), style);
       this.debugText = this.add.text(20, 40, + Math.floor(highscore), style);
@@ -255,11 +265,10 @@ class mainScene {
 
     update() {
 
-      this.debugText.setText(this.boosterSound.volume)
+      this.debugText.setText(this.rocket.angle)
       this.speedText.setText(Math.round(this.force));
-      this.thrustText.setText(Math.round(this.acceleration * 100))
 
-      this.force += this.acceleration/10
+      this.force += this.thrust/1000
 
       ///garbage collection (far away asteroids)
       this.asteroids.children.each( function(p){
@@ -273,15 +282,11 @@ class mainScene {
       
       //================== LOW HEIGHT CHECKS
 
-      if(this.distanceY < 20 && this.distanceY != 0){
-        if(this.acceleration > -0.5){
-          this.acceleration -= (20 - this.distanceY)/20 * 0.003
-        }
-      }
+
 
       if(this.distanceY < 100){
         this.soundManager()
-        //this.addTurbolences()
+        this.addTurbolences()
         this.checkLanded()
         this.checkAirspaceBounds()
         this.setDustEmitterCheck()
@@ -306,6 +311,7 @@ class mainScene {
       this.setCursorPosition()
       this.setThrustPositions()
       this.setAltitudePositions()
+      this.setSpeedPositions()
 
       this.distanceYText.setText(Math.floor(this.distanceY));
 
@@ -318,17 +324,17 @@ class mainScene {
       if(this.rkey.isDown)
         this.restart()
 
-      if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive){
-        this.acceleration -= 0.005
+      if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 0){
+        this.thrust -= 1
+        this.thrustText.setText(this.thrust)
         //decrease thrust
-
       }
 
-      if(this.arrow.up.isDown && this.alive){
+      if(this.arrow.up.isDown && this.alive && this.thrust < 100){
         this.started = true
-        this.acceleration += 0.005
+        this.thrust += 1
+        this.thrustText.setText(this.thrust)
         //increase thrust
-
       }
 
       if(this.arrow.right.isDown && this.distanceY > 0){
@@ -457,18 +463,18 @@ class mainScene {
     }
 
     setThrustPositions(){
-      if(Math.abs(this.force) <= 9){
+      if(Math.abs(this.thrust) <= 9){
         this.thrustText.x = 72
         this.thrustText.y = 700
       }
         
 
-      if(Math.abs(this.force) > 9){
+      if(Math.abs(this.thrust) > 9){
         this.thrustText.x = 65
         this.thrustText.y = 700
       }
 
-      if(Math.abs(this.force) > 99){
+      if(Math.abs(this.thrust) > 99){
         this.thrustText.x = 60
         this.thrustText.y = 700
       }
@@ -476,21 +482,21 @@ class mainScene {
 
     setDustEmitterCheck(){
 
-      //rocket angle range = -90 till 90
-      //map this to gravity 200 till -200
       if(this.dust == true){
         let grav = this.rocket.angle/-90 * 200
         this.dust_emitter.setGravityX(grav)
         console.log(this.rocket.angle)
       }
 
-      if ((this.distanceY > 0.6 || Math.round(100* this.acceleration) == 0 ) && this.dust == true) {
+      if ((this.distanceY > 0.6 || this.thrust == 0 || Math.abs(this.rocket.angle) > 70 ) && this.dust == true ) {
+        console.log("disabled dust")
         this.dust_emitter.on = false;
         this.gdust_emitter.on = false;
         this.dust = false
       }
 
-      if(this.distanceY < 0.8 && Math.round(100* this.acceleration) != 0 && this.dust == false){
+      if((this.distanceY < 0.8 && this.thrust != 0 && Math.abs(this.rocket.angle) < 70) && this.dust == false){
+        console.log("enabled dust")
         this.dust_emitter.on = true;
         this.gdust_emitter.on = true;
         this.dust = true
@@ -513,7 +519,7 @@ class mainScene {
 
 
     roadsterEgg(){
-      if(this.distanceY > 0 && this.eggTwo == false && Math.random() < 0.0001){
+      if(this.distanceY > 200 && this.eggTwo == false && Math.random() < 0.0001){
         this.spacetesla = this.physics.add.sprite(450, -250, 'spacetesla');
         this.asteroids.add(this.spacetesla)
         this.spacetesla.body.velocity.y = this.speedY 
@@ -526,7 +532,7 @@ class mainScene {
 
     setAltitudePositions(){
       if(Math.abs(this.distanceY) <= 9.9){
-        this.distanceYText.x = 273
+        this.distanceYText.x = 275
         this.distanceYText.y = 700
       }
         
@@ -542,6 +548,24 @@ class mainScene {
       }
     }
 
+    setSpeedPositions(){
+      if(Math.abs(this.force) < 10){
+        this.speedText.x = 175
+        this.speedText.y = 700
+      }
+        
+
+      if(Math.abs(this.force) >= 10){
+        this.speedText.x = 167
+        this.speedText.y = 700
+      }
+
+      if(Math.abs(this.force) > 99){
+        this.speedText.x = 163
+        this.speedText.y = 700
+      }
+    }
+
     setCursorPosition(){
       this.cursor.angle = (120 * (this.distanceY/1000)) - 60
       if (this.cursor.angle > 60 )
@@ -549,10 +573,10 @@ class mainScene {
     }
 
     setPropulsionEmitterState(){
-      if(Math.round(this.acceleration * 100) == 0 && this.propulsion_emitter.on == true)
+      if(this.thrust == 0 && this.propulsion_emitter.on == true)
         this.propulsion_emitter.on = false
     
-      if (Math.round(this.acceleration * 100) != 0 && this.propulsion_emitter.on == false)
+      if (this.thrust != 0 && this.propulsion_emitter.on == false)
         this.propulsion_emitter.on = true
     }
 
@@ -570,6 +594,8 @@ class mainScene {
         this.speedX = -1* (Math.sin(this.rocket.rotation) * this.force)
         this.speedY = (Math.cos(this.rocket.rotation) * this.force)
       }
+
+
     }
 
     calculateCurrentCoords(){
@@ -738,28 +764,22 @@ class mainScene {
     }
 
     addTurbolences(){
-      if(this.distanceY < 40 && this.distanceY != 0){
-        this.force += this.lookup()
+      if(this.distanceY > 60)
+        return;
 
-        if(this.lookup() >= 0.5){
-          this.speedX -= this.lookup()*3
-          this.speedY -= this.lookup()*3
-          this.rocket.angle -= this.lookup()/10
-        } else {
-          this.rocket.angle += this.lookup()/10
-          this.speedX += this.lookup()*3
-          this.speedY += this.lookup()*3
-        }
+      if(this.thrust > 0){
+        let strength = (0.001 + 0.00001 *this.thrust)
+        this.cameras.main.shake(200,strength);
       }
     }
 
     soundManager(){
 
-      if (this.acceleration == 0)
+      if (this.thrust == 0)
         this.boosterSound.volume = 0
 
-      if (Math.round(this.acceleration*100) < 100  && this.distanceY < 50 && this.running && this.alive)
-        this.boosterSound.volume = Math.abs(100* this.acceleration)/100
+      if (this.thrust < 100  && this.distanceY < 50 && this.running && this.alive)
+        this.boosterSound.volume = Math.abs(this.thrust)/100
 
 
       if(!this.boosterSound.isPlaying && this.distanceY < 50 && this.alive){
@@ -793,24 +813,29 @@ class mainScene {
         p.body.velocity.y = y;
     },this)
 
-    this.satellites.children.each( function(p){
+     this.satellites.children.each( function(p){
       p.body.velocity.x = x;
       p.body.velocity.y = y;
       p.angle += 0.2 
     },this)
 
 
-    this.clouds.children.each( function(p){
+      this.clouds.children.each( function(p){
       p.body.velocity.x = x;
       p.body.velocity.y = y;
     },this)
 
 
-
+      this.center_particle.body.velocity.y = y;
       this.floor.body.velocity.x = x;
       this.floor.body.velocity.y = y;
       this.buildings.body.velocity.x = x;
       this.buildings.body.velocity.y = y;
+      if (this.boring){
+        this.boringmachine.body.velocity.x = x;
+        this.boringmachine.body.velocity.y = y;
+      }
+
       
       if(y != 0)
         this.background.tilePositionY += -y/100

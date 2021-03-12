@@ -9,9 +9,8 @@ class mainScene {
 
     //TODO ========== FEATURES TO IMPLEMENT =================
     //TODO add tunnel boring machine#    
-    //TODO add angle of dust cloud matching rocket angle
     //TODO add new physics / acc settings
-    //TODO add higher speed -> less left/right tilting
+    //TODO add higher speed -> less left/right tilting ??
     //TODO add mars at 1000 - land there ->  success  + sky gradient to yellowish grey + less asteroids on approach
 
     //================ BUGS TO FIX ================
@@ -20,6 +19,8 @@ class mainScene {
     //TODO fix hitbox of the asteroids?!
     //TODO clouds spawn mid screen (left and right spawns)
     //TODO position explosion particle origin 
+    //TODO dont follow the x-axis of the floor (dust emitter)
+      //add sprite that is always in the x-center but moves y-axis and follow this one instead of floor
 
     // ================= OTHER
     //TODO embed in website
@@ -57,6 +58,7 @@ class mainScene {
 
     create() {
 
+      this.random = Math.random()
       this.eggOne = false;
       this.eggTwo = false;
       this.i=1e6
@@ -271,12 +273,6 @@ class mainScene {
           this.o2_emitter3.stop()
           this.fog = false
         }
-
-        if(this.distanceY < 0.8 && this.force != 0 && this.dust == false){
-          this.dust_emitter.on = true;
-          this.gdust_emitter.on = true;
-          this.dust = true
-        }
       }
 
       //============= GENERAL CHECKS
@@ -467,11 +463,27 @@ class mainScene {
     }
 
     setDustEmitterCheck(){
-      if ((this.distanceY > 0.8 || this.force == 0 ) && this.dust == true) {
+
+      //rocket angle range = -90 till 90
+      //map this to gravity 200 till -200
+      if(this.dust == true){
+        let grav = this.rocket.angle/-90 * 200
+        this.dust_emitter.setGravityX(grav)
+        console.log(this.rocket.angle)
+      }
+
+      if ((this.distanceY > 0.6 || this.force == 0 ) && this.dust == true) {
         this.dust_emitter.on = false;
         this.gdust_emitter.on = false;
         this.dust = false
       }
+
+      if(this.distanceY < 0.8 && this.force != 0 && this.dust == false){
+        this.dust_emitter.on = true;
+        this.gdust_emitter.on = true;
+        this.dust = true
+      }
+
     }
 
     blackbirdEgg(){
@@ -801,7 +813,7 @@ class mainScene {
         this.blue = 0.68 - (this.distanceY/100)
       }
 
-      this.skycolor = this.hslToRgb(199/255 ,1, this.blue ) 
+      this.skycolor = this.hslToRgb(199/255 ,1-this.random/2, this.blue) 
       this.background.setTint(this.rgbToHex(this.skycolor[0], this.skycolor[1], this.skycolor[2]))
     }
 

@@ -12,11 +12,11 @@ class mainScene {
 
     //TODO add mars at 1000 - land there ->  success  + sky gradient to yellowish grey + less asteroids on approach
 
-    //TODO add higher speed -> less left/right tilting ??
-    //TODO add gravity
-    //TODO add trägheit
+    //TODO add higher speed -> less left/right tilting for arcade mode
+    //TODO somehow display x-Axis speed
     //TODO maybe add limited fuel and refueling in sky (meet other starship in orbit back to back)
-    //TODO add crash to ground detection (max speed requirement)
+    //TODO fade out gravity in space (both modes)
+    //TODO add gravity to arcade mode (and maybe negative thrust)
 
     //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
@@ -26,6 +26,8 @@ class mainScene {
     //TODO position explosion particle origin 
     //TODO shake position instead of shake camera? dont know
     //TODO fix ground hitbox (raise actual ground, not buildings, fix rocket hitbox (tip))
+    //TODO fix floating point altitude position display (and remove decimal if > 10)
+    //TODO the hitbox doesn't rotate with the rocket?!
 
     // ================= OTHER
     //TODO embed in website
@@ -33,6 +35,7 @@ class mainScene {
     //TODO add crypto mode
     //TODO replace skins with selfmade skins (rocket, asteroids, clouds, blackbird, spacetesla, boringmachine)
     //TODO add credits for sound (zappsplat)
+    //TODO add possibility to switch the modes arcade mode with inertia dampeners enabled
 
 
 
@@ -65,7 +68,7 @@ class mainScene {
 
     create() {
 
-      this.acceleration = 0
+      this.arcade = true //switches the acceleration / speed system
       this.boring = false
       this.random = Math.random()
       this.eggOne = false;
@@ -225,14 +228,15 @@ class mainScene {
       this.seconds = 0
       this.minutes = 0
       this.velocityX = 0;
+      this.speedY = 0
       this.positionYold = 0
       this.positionXold = 0
       this.thrust = 0
 
       this.highscoreText = this.add.text(20, 20, 'Highscore: ' + Math.floor(highscore), style);
-      this.debugText = this.add.text(20, 40, + Math.floor(highscore), style);
-      this.thrustText = this.add.text(72, 700, this.acceleration, style);
-      this.speedText = this.add.text(173, 700, this.force, style);
+      this.debugText = this.add.text(20, 40, "test", style);
+      this.thrustText = this.add.text(72, 700, 0, style);
+      this.speedText = this.add.text(173, 700, 0, style);
       this.distanceYText = this.add.text(273, 700, 0, style);
       this.tplus = this.add.text(520, 750, "T+00:00:00", style2);
       this.tplus.setDepth(4)  
@@ -264,11 +268,16 @@ class mainScene {
     }
 
     update() {
+      if(this.distanceY > 0 && this.speedY > -150 && !this.arcade){
+        this.speedY -= 0.1
+        this.refreshVelocity(this.speedX,this.speedY)
+      } else {
+        this.force += this.thrust/1000
+      }
 
-      this.debugText.setText(this.rocket.angle)
-      this.speedText.setText(Math.round(this.force));
+      this.debugText.setText("debug:" + this.speedY)
+      this.speedText.setText(Math.round(this.speedY));
 
-      this.force += this.thrust/1000
 
       ///garbage collection (far away asteroids)
       this.asteroids.children.each( function(p){
@@ -313,7 +322,7 @@ class mainScene {
       this.setAltitudePositions()
       this.setSpeedPositions()
 
-      this.distanceYText.setText(Math.floor(this.distanceY));
+      this.distanceYText.setText(Math.round(this.distanceY*10)/10);
 
       if (this.distanceY > highscore){
         highscore = this.distanceY
@@ -388,8 +397,6 @@ class mainScene {
     }
 
     addSomeTopAsteroids(){
-      if (this.force == 0)
-        return;
       var i = Math.floor(this.lookup() * 10 + this.distanceY/100) + 1
       for (i ;i > 0; i--){
         this.addObstacleTopRandLoc()
@@ -397,8 +404,6 @@ class mainScene {
     }
 
     addSomeRightAsteroids(){
-      if (this.force == 0)
-        return;
       var l = Math.floor(this.lookup() * 4 + this.distanceY/100) + 1
       for (l ;l > 0; l--){
         this.addObstacleRightRandLoc()
@@ -406,8 +411,6 @@ class mainScene {
     }
 
     addSomeLeftAsteroids(){
-      if (this.force == 0)
-        return;
       var k = Math.floor(this.lookup() * 4 + this.distanceY/100) + 1
       for (k ;k > 0; k--){
         this.addObstacleLeftRandLoc()
@@ -581,21 +584,38 @@ class mainScene {
     }
 
     calculateXandYSpeeds(){
-      if (this.rocket.angle <= 90 && this.rocket.angle > 0){
-        this.speedX =  -1 *(this.force * Math.sin(this.rocket.rotation))
-        this.speedY = (this.force * Math.cos(this.rocket.rotation))
-      } else if (this.rocket.angle > 90 && this.rocket.angle <= 180){
-        this.speedX = Math.sin(2*Math.PI - this.rocket.rotation) * this.force
-        this.speedY = Math.cos(2*Math.PI - this.rocket.rotation ) * this.force
-      } else if (this.rocket.angle > -180 && this.rocket.angle <= -90){
-        this.speedX =  (Math.sin(this.rocket.rotation - Math.PI) * this.force)
-        this.speedY =  -1* (Math.cos(this.rocket.rotation - Math.PI) * this.force)
-      } else if (this.rocket.angle > -90 && this.rocket.angle <= 0){
-        this.speedX = -1* (Math.sin(this.rocket.rotation) * this.force)
-        this.speedY = (Math.cos(this.rocket.rotation) * this.force)
+      if (this.arcade){
+        if (this.rocket.angle <= 90 && this.rocket.angle > 0){
+          this.speedX =  -1 *(this.force * Math.sin(this.rocket.rotation))
+          this.speedY = (this.force * Math.cos(this.rocket.rotation))
+        } else if (this.rocket.angle > 90 && this.rocket.angle <= 180){
+          this.speedX = Math.sin(2*Math.PI - this.rocket.rotation) * this.force
+          this.speedY = Math.cos(2*Math.PI - this.rocket.rotation ) * this.force
+        } else if (this.rocket.angle > -180 && this.rocket.angle <= -90){
+          this.speedX =  (Math.sin(this.rocket.rotation - Math.PI) * this.force)
+          this.speedY =  -1* (Math.cos(this.rocket.rotation - Math.PI) * this.force)
+        } else if (this.rocket.angle > -90 && this.rocket.angle <= 0){
+          this.speedX = -1* (Math.sin(this.rocket.rotation) * this.force)
+          this.speedY = (Math.cos(this.rocket.rotation) * this.force)
+        }
+      } else {
+        let factor = 1
+        if (this.rocket.angle <= 90 && this.rocket.angle > 0){
+          this.speedX +=  -1 *(this.thrust/100 * Math.sin(this.rocket.rotation)) * factor
+          this.speedY += (this.thrust/100 * Math.cos(this.rocket.rotation))* factor
+          
+        } else if (this.rocket.angle > 90 && this.rocket.angle <= 180){
+          this.speedX += Math.sin(2*Math.PI - this.rocket.rotation) * this.thrust/100 * factor
+          this.speedY += Math.cos(2*Math.PI - this.rocket.rotation ) * this.thrust/100  * factor
+        } else if (this.rocket.angle > -180 && this.rocket.angle <= -90){
+          this.speedX +=  (Math.sin(this.rocket.rotation - Math.PI) * this.thrust/100) * factor
+          this.speedY +=  -1* (Math.cos(this.rocket.rotation - Math.PI) * this.thrust/100)  * factor
+        } else if (this.rocket.angle > -90 && this.rocket.angle <= 0){ 
+          this.speedX += -1* (Math.sin(this.rocket.rotation) * this.thrust/100) * factor
+          this.speedY += (Math.cos(this.rocket.rotation) * this.thrust/100) * factor
+        }
+
       }
-
-
     }
 
     calculateCurrentCoords(){
@@ -713,14 +733,21 @@ class mainScene {
     }
 
     checkLanded(){
+
+      if(Math.abs(this.speedY) > 15 && this.distanceY <= 0.01){
+        this.hitSpaceObstacle()
+      }
+
       if(Math.abs(this.rocket.angle) > 10 && this.distanceY <= 0.01){
         this.hitSpaceObstacle()
       }
       if(this.distanceY < 0){
         this.force = 0
+        this.speedY = 0
+        this.speedX = 0
         this.distanceY = 0
-        this.acceleration = 0
         this.velocityX = 0
+        this.refreshVelocity(this.speedX,this.speedY)
         this.speedText.setText(this.force);
       }
     }

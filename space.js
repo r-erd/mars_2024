@@ -8,16 +8,21 @@ class mainScene {
 
     //============== FEATURES TO IMPLEMENT =================
 
-    //TODO add mars at 1000 - land there ->  success + less asteroids on approach +dont spawn stuff IN mars
+    //BOTH
+    //TODO add boring machine texture 
 
+    //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!
-    //TODO somehow display x-Axis speed
-    //TODO real mode: maybe add limited fuel and refueling in sky (meet other starship in orbit back to back)
-    //TODO real mode: make numbers fit to the real world (alt, speed)
+    //TODO less time till the sats appear and directly after the asteroids, improve the way it gets harder (upper limit)
 
+    //REAL MODE
+    //TODO add mars at 1000 - land there ->  success + less asteroids on approach +dont spawn stuff IN mars
     //TODO add airspace bounds for mars
+    //TODO somehow display x-Axis speed
     //TODO change mars texture
     //TODO add dust emitter on mars
+    //TODO real mode: maybe add limited fuel and refueling in sky (meet other starship in orbit back to back)
+    //TODO real mode: make numbers fit to the real world (alt, speed)
     //TODO add buildings to mars (and a few already landed rockets + craters and the mars rover driving around easteregg)
 
     //================ BUGS TO FIX ================
@@ -72,7 +77,7 @@ class mainScene {
 
     create() {
 
-      this.arcade = false //switches the acceleration / speed system and the mars-existence
+      this.arcade = true //switches the acceleration / speed system and the mars-existence
       this.boring = false
       this.random = Math.random()
       this.eggOne = false;
@@ -281,7 +286,7 @@ class mainScene {
           this.speedY -= 0.2 * (1 - this.distanceY/60)
         } 
         if(this.distanceY > 60){
-          this.speedY += 0.2 * 0.3 (this.distanceY-60/40)
+          this.speedY += 0.2 * 0.3 * ((this.distanceY-60)/40)
         }
 
         this.refreshVelocity(this.speedX,this.speedY)
@@ -499,6 +504,7 @@ class mainScene {
       this.force = 0
       this.speedY = 0;
       this.speedX = 0
+      this.thrust = 0
       this.refreshVelocity(0,0)
 
       this.alive = false;
@@ -656,7 +662,7 @@ class mainScene {
           this.speedY = (Math.cos(this.rocket.rotation) * this.force*10)
         }
       } else {
-        let factor = 0.6
+        let factor = 0.4
         if (this.rocket.angle <= 90 && this.rocket.angle > 0){
           this.speedX +=  -1 *(this.thrust/100 * Math.sin(this.rocket.rotation)) * factor
           this.speedY += (this.thrust/100 * Math.cos(this.rocket.rotation))* factor
@@ -872,7 +878,7 @@ class mainScene {
 
     addTurbolences(){
 
-      if(this.arcade && this.distanceY < 60)
+      if(this.arcade && this.distanceY > 60)
         return;
 
       if(this.distanceY > 60 && this.distanceY < 70)

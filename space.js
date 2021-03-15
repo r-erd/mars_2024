@@ -1,6 +1,8 @@
 var highscore = 0;
+var arcade = true //switches the acceleration / speed system and the mars-existence
 //restart on r
 //fly with arrow keys
+//change gamemode on m
 
 
 class mainScene {
@@ -12,7 +14,7 @@ class mainScene {
     //TODO add boring machine texture 
 
     //ARCADE MODE
-    //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!
+    //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
     //TODO less time till the sats appear and directly after the asteroids, improve the way it gets harder (upper limit)
 
     //REAL MODE
@@ -35,7 +37,7 @@ class mainScene {
     //TODO fix ground hitbox (raise actual ground, not buildings, fix rocket hitbox (tip))
     //TODO fix floating point altitude position display (and remove decimal if > 10)
     //TODO the hitbox doesn't rotate with the rocket?!
-    //TODO make mars texture wider (higher)
+    //TODO make mars texture higher
 
     // ================= OTHER
     //TODO embed in website
@@ -43,7 +45,6 @@ class mainScene {
     //TODO add crypto mode
     //TODO replace skins with selfmade skins (rocket, asteroids, clouds, blackbird, spacetesla, boringmachine)
     //TODO add credits for sound (zappsplat)
-    //TODO add possibility to switch the modes arcade mode with inertia dampeners enabled
 
 
 
@@ -77,7 +78,7 @@ class mainScene {
 
     create() {
 
-      this.arcade = true //switches the acceleration / speed system and the mars-existence
+
       this.boring = false
       this.random = Math.random()
       this.eggOne = false;
@@ -230,6 +231,7 @@ class mainScene {
 
       let style = { font: '20px Arial', fill: '#ffffff' };
       let style2 = { font: '30px Arial', fill: '#ffffff' };
+      let style3 = { font: '15px Arial', fill: '#ffffff' };
 
       this.force = 0;
       this.distanceY = 0;
@@ -250,7 +252,14 @@ class mainScene {
       this.speedText = this.add.text(173, 700, 0, style);
       this.distanceYText = this.add.text(273, 700, 0, style);
       this.tplus = this.add.text(520, 750, "T+00:00:00", style2);
+      this.missionText = this.add.text(550, 779, "Mission Mars", style3);
+      if(arcade){
+        this.missionText.setText("Mission Explore");
+      } else {
+        this.missionText.setText("Mission Mars");
+      }
       this.tplus.setDepth(4)  
+      this.missionText.setDepth(4)
 
       this.asteroids = this.physics.add.group(); 
       this.satellites = this.physics.add.group(); 
@@ -259,6 +268,7 @@ class mainScene {
 
       this.arrow = this.input.keyboard.createCursorKeys();
       this.rkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+      this.mkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
 
 
       this.timer = this.time.addEvent({
@@ -280,7 +290,7 @@ class mainScene {
 
     update() {
 
-      if(this.distanceY > 0 && this.speedY > -150 && !this.arcade){
+      if(this.distanceY > 0 && this.speedY > -150 && !arcade){
         if(this.distanceY < 60){
           //earth gravity
           this.speedY -= 0.2 * (1 - this.distanceY/60)
@@ -296,7 +306,7 @@ class mainScene {
 
       this.debugText.setText("debug:" + this.speedY)
 
-      if(this.arcade){
+      if(arcade){
         this.speedText.setText(Math.round(this.force*10));
       } else {
         this.speedText.setText(Math.round(this.speedY));
@@ -336,7 +346,7 @@ class mainScene {
 
       //============= GENERAL CHECKS
 
-      if( this.distanceY > 90 && this.marsExists != true && !this.arcade){
+      if( this.distanceY > 90 && this.marsExists != true && !arcade){
         this.mars = this.physics.add.sprite(0,-550, 'mars');   //equals to landing at 98.7
         this.mars.setDepth(0)
         this.marsExists = true
@@ -365,9 +375,20 @@ class mainScene {
       if(this.rkey.isDown)
         this.restart()
 
+      if(Phaser.Input.Keyboard.JustDown(this.mkey) && this.distanceY == 0){
+        arcade = !arcade
+
+        if(arcade){
+          this.missionText.setText("Mission Explore");
+        } else {
+          this.missionText.setText("Mission Mars");
+        }
+      }
 
 
-      if(!this.arcade){
+
+
+      if(!arcade){
 
         if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 0){
           this.thrust -= 1
@@ -442,7 +463,7 @@ class mainScene {
       
       //maybe combine sat and ast groups?
 
-      if(this.arcade){
+      if(arcade){
         if(this.physics.overlap(this.rocket, this.asteroids)){
           this.hitSpaceObstacle()
         }
@@ -647,7 +668,7 @@ class mainScene {
     }
 
     calculateXandYSpeeds(){
-      if (this.arcade){
+      if (arcade){
         if (this.rocket.angle <= 90 && this.rocket.angle > 0){
           this.speedX =  -1 *(this.force *10 * Math.sin(this.rocket.rotation))
           this.speedY = (this.force *10 * Math.cos(this.rocket.rotation))
@@ -798,7 +819,7 @@ class mainScene {
     checkLanded(){
 
       //mars
-      if(!this.arcade){
+      if(!arcade){
         if(Math.abs(this.speedY) > 15 && this.distanceY >= 98.7){
           this.hitSpaceObstacle()
         }
@@ -878,7 +899,7 @@ class mainScene {
 
     addTurbolences(){
 
-      if(this.arcade && this.distanceY > 60)
+      if(arcade && this.distanceY > 60)
         return;
 
       if(this.distanceY > 60 && this.distanceY < 70)
@@ -895,7 +916,7 @@ class mainScene {
       if (this.thrust == 0)
         this.boosterSound.volume = 0
 
-      if(!this.arcade){
+      if(!arcade){
         if (this.thrust < 100  && (this.distanceY < 50 || this.distanceY > 70) && this.running && this.alive)
           this.boosterSound.volume = Math.abs(this.thrust)/100
 
@@ -994,7 +1015,7 @@ class mainScene {
         //ends at full black
       }
 
-      if(!this.arcade){
+      if(!arcade){
         if(this.distanceY > 70){
           this.red = ((this.distanceY-70)/30) * 0.6
         }

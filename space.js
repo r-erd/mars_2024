@@ -10,8 +10,8 @@ class mainScene {
 
     //============== FEATURES TO IMPLEMENT =================
 
-    //BOTH
-    //TODO add boring machine texture 
+    //starlink sats 2.8 * 10m groß - starship 9m diameter - fix size
+    //boring machine skin longer
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
@@ -92,12 +92,7 @@ class mainScene {
       }
 
 
-      if(this.lookup() < 0.2){
-        this.boringmachine = this.physics.add.sprite(2710, 745, 'boring'); 
-        this.boringmachine.body.velocity.x = -1
-        this.boringmachine.setDepth(2)
-        this.boring = true
-      }
+
 
 
       this.marsExists = false
@@ -154,6 +149,7 @@ class mainScene {
       this.rocket.setOrigin(0.5,1)
       this.rocket.setDepth(1)
       this.o2EmitterInit()
+
 
 
       var sand_particles = this.add.particles("sand_particle");
@@ -258,6 +254,37 @@ class mainScene {
       } else {
         this.missionText.setText("Mission Mars");
       }
+
+      if(this.lookup() <= 0.1){
+
+        var boring_particles = this.add.particles("sand_particle");
+        this.boring_emitter = boring_particles.createEmitter({
+          alpha: { start: 0.5, end: 0.5 },
+          scale: { start: 0.5, end: 0.2 },
+          rotate: { min: -180, max: 180 },
+          lifespan: 10,
+          blendMode: 'ADD',
+          frequency: 1 ,
+          bounce: 0,
+          GravityY : 10,
+          active : false,
+          maxParticles: 5000,
+          collideBottom: true,
+          x: {min: -1, max: 1 },
+          y: {min: -6, max: 6 },
+          });
+        boring_particles.setDepth(3)
+
+        this.boringmachine = this.physics.add.sprite(1390, 745, 'boring');  //adjust this if size changes!!
+        this.boringmachine.setScale(0.5)
+        this.boringmachine.body.velocity.x = -0.2
+        this.boringmachine.setDepth(2)
+        this.boring = true
+        this.boring_emitter.startFollow(this.boringmachine,-188,0,false)   //offset ist länge/2 (aktuell 350 -> 175) plus minus bisschen
+        this.boring_emitter.active = true; 
+      }
+
+
       this.tplus.setDepth(4)  
       this.missionText.setDepth(4)
 

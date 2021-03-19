@@ -16,6 +16,13 @@
   }
 
 
+  .logo {
+    height: 2vw;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    margin-right: 20px;
+  }
 
 
 /** Hover-related CSS **/

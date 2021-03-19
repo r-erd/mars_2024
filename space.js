@@ -12,6 +12,7 @@ class mainScene {
 
     //starlink sats 2.8 * 10m groß - starship 9m diameter - fix size
     //boring machine skin longer
+    //maybe add hyperloops to underground (with driving teslas?)
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???

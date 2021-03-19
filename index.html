@@ -1,11 +1,179 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.14.0/dist/phaser.min.js"></script>
     <script src="space.js"></script>
-  </head>
-  <body>
-    <div style="border-radius: 20px; border: 5px solid white; margin-left: 300px; margin-top: 50px; height: fit-content; width: fit-content;"  id="game"></div>
-  </body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+       <link rel="stylesheet" href="styles.css">
+</head>
+
+<body style="background-color: black;">
+
+    <div style="height:0vh;">
+        <img src="assets/world2.jpg"
+            style="width: 100vw; height:100vh ; object-fit: cover; z-index: -1; position: absolute;"
+            alt="picture of earth from above">
+    </div>
+
+    <div class="row sticky-top">
+
+        <div class="mx-left sticky-top" style="margin-left: 20vw; height: 4vh;">
+            <nav class="navbar navbar-light" style="padding-top: 3vh; color:white;">
+                <a class="navbar-brand text-white" href="#">Sticky top</a>
+
+
+                <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> EAGLEOWL 10</a>
+                  </div>
+
+                  <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> GREAT HORNED OWL</a>
+                  </div>
+
+                  <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> KNIGHT</a>
+                  </div>
+
+                  <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> MOONBOAT </a>
+                  </div>
+
+                  <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> HUMAN SPACEFLIGHT</a>
+                  </div>
+
+                  <div class="link-background" style="padding-right: 1vw;">
+                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> ROCKETPOOLING</a>
+                  </div>
+                
+                <!-- underline go to right? -  fade navbar away when scrolling down a lot, link to wikipedia-->
+            </nav>
+        </div>
+
+
+    </div>
+
+
+
+    
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <div class="d-flex justify-content-left align-items-end" style="height: 96vh; padding-bottom: 15vh;">
+
+
+                    <div>
+                        <h5 class="text-white m-2" style="display: block;"> UPCOMING LAUNCH </h5>
+
+                        <h3 class="text-white m-2" style="display: block; font-size: 6vh;"> EXPLORE MISSION </h3>
+
+                        <div class="button-background">
+                            <button class="btn btn-light m-2 below" style="background-color: transparent; width: 170px; height: 50px; border-radius: 0;"> PLAY </button>
+                            <!-- on hover fill this button white, make this button animate scroll to game-->
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+    </div>
+
+
+    <div class="container-fluid" style="background-color:black;">
+        <div class="row">
+            <div class="col-2 text-white">
+                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                    <div>
+                        display controls here
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="d-flex justify-content-center align-items-end pb-5" style="height: 100vh;">
+                     <div style="height: fit-content; width: fit-content;"  id="game"></div>
+                </div>
+
+            </div>
+            <div class="col-2">
+                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                    <div>
+                        display small story / explanation here
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="container-fluid" style="background-color:black;">
+
+
+        <div class="row">
+            
+            <div class="col-2 text-white">
+                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                    <div>
+                        something here?
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="d-flex justify-content-center align-items-center pb-5 text-white" style="height: 100vh;">
+                     <p>story of why and how i did this + donation link</p>
+                </div>
+
+            </div>
+            <div class="col-2">
+                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                    <div>
+                        something here?
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="row" style="background-color: black; height: 8vh;">
+            <div class="mx-auto">
+                <nav class="navbar navbar-light text-white" role="navigation">
+                    <!-- change this stuff-->
+                    <a class="nav-item nav-link text-white mr-2" href="#">vbroker C 2020</a>
+                    <a class="nav-item nav-link text-white mr-2" href="#">Privacy</a>
+                    <a class="nav-item nav-link text-white mr-2" href="#">Impressum</a>
+                    <a class="nav-item nav-link text-white mr-2" href="#">Support</a>
+                    <a class="nav-item nav-link text-white mr-2" href="#">Terms</a>
+                    <a class="nav-item nav-link text-white mr-2" href="#">Newsletter</a>
+                </nav>
+            </div>
+        </div>
+
+    </footer>
+
+
+
+
+
+
+</body>
+
 </html>

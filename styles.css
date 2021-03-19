@@ -1,0 +1,110 @@
+
+@font-face {
+    font-family: ddinbold;
+    src: url('D-DIN-Bold.woff2') format('woff2'); /* Super Modern Browsers */
+    src: url('D-DIN-Bold.woff') format('woff'), /* Super Modern Browsers */
+         url('D-DIN-Bold.ttf') format('truetype'), /* Super Modern Browsers */
+         url('D-DIN-Bold.otf') format('otf'), /* Super Modern Browsers */
+  }
+
+  @font-face {
+    font-family: ddin;
+    src: url('D-DIN.woff2') format('woff2'); /* Super Modern Browsers */
+    src: url('D-DIN.woff') format('woff'), /* Super Modern Browsers */
+         url('D-DIN.ttf') format('truetype'), /* Super Modern Browsers */
+         url('D-DIN.otf') format('otf'), /* Super Modern Browsers */
+  }
+
+
+
+
+/** Hover-related CSS **/
+a.left
+{
+    position: relative;
+}
+
+a.left:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+a.left:hover:before {
+  visibility: visible;
+  width: 100%;
+}
+
+button.below
+{
+    position: relative;
+    color: #FFF;
+}
+
+button.below:before {
+  content: "";
+  position: absolute;
+  width: 170px;
+  height: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  background-color: #FFF;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+button.below:hover:before {
+  visibility: visible;
+  height:100%;
+}
+
+button.below:hover{
+  color: black;
+}
+
+
+
+
+ 
+
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+  
+
+  
+  body {
+    font-family: 'ddinbold','ddin', Fallback, sans-serif;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    overflow-x: hidden;
+  }
+
+  h5 {
+    font-family: 'ddin','ddin', Fallback, sans-serif;
+    font-size: 2vh;
+  }
+
+  h4 {
+    font-family: 'ddin', Fallback, sans-serif;
+  }
+
+  button {
+    font-family: 'ddinbold', Fallback, sans-serif;
+  }
+
+  a {
+    font-family: 'ddinbold', Fallback, sans-serif;
+    font-size: 14px;
+    
+  }
+
+  

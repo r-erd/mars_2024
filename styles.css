@@ -9,11 +9,12 @@
 
   @font-face {
     font-family: ddin;
-    src: url('D-DIN.woff2') format('woff2'); /* Super Modern Browsers */
-    src: url('D-DIN.woff') format('woff'), /* Super Modern Browsers */
-         url('D-DIN.ttf') format('truetype'), /* Super Modern Browsers */
-         url('D-DIN.otf') format('otf'), /* Super Modern Browsers */
+    src: url('D-DIN.woff2') format('woff2'); 
+    src: url('D-DIN.woff') format('woff'), 
+         url('D-DIN.ttf') format('truetype'), 
+         url('D-DIN.otf') format('otf'), 
   }
+
 
 
   .logo {
@@ -23,6 +24,20 @@
     width: auto;
     margin-right: 20px;
   }
+
+  .smart-scroll{
+    position: fixed;
+    z-index: 1030;
+  }
+
+  .scrolled-down{
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+ }
+ .scrolled-up{
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+ }
 
 
 /** Hover-related CSS **/
@@ -94,6 +109,7 @@ button.below:hover{
     scrollbar-width: none;  /* Firefox */
     overflow-x: hidden;
   }
+
 
   h5 {
     font-family: 'ddin','ddin', Fallback, sans-serif;

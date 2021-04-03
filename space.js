@@ -17,6 +17,8 @@ class mainScene {
     //Fix text z - index (is currently below asteroids)
     //fix scaling for small screens and add touch control / gyro control?
     //add deathscreen info
+    //add border-background (grey frame)
+    //fix o2 emitter (more y-axis variance?)
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
@@ -773,40 +775,40 @@ class mainScene {
       var o2_particles = this.add.particles("cursor");
       this.o2_emitter = o2_particles.createEmitter({
         alpha: { start: 0.5, end: 0.1 },
-        scale: { start: 0.5, end: 0.2 },
+        scale: { start: 0.8, end: 0.8 },
         rotate: { min: -180, max: 180 },
-        lifespan: { min: 1600, max: 4600 },
+        lifespan: { min: 2600, max: 4600 },
         blendMode: 'NORMAL',
-        frequency: 80 ,
+        frequency: 200 ,
         bounce: 0,
         speedX: 10,
         on: true,
         maxParticles: 5000,
         collideBottom: true,
-        x: {min: -30, max: 30 },
-        y: {min: -5, max: 10 },
+        //x: {min: -30, max: 30 },
+        //y: {min: -15, max: 130 },
         });
       o2_particles.setDepth(1)
-      this.o2_emitter.startFollow(this.floor,0,-110,false)      
+      this.o2_emitter.startFollow(this.floor,0,-105,false)      
       
       var o2_particles2 = this.add.particles("cursor");
       this.o2_emitter2 = o2_particles2.createEmitter({
         alpha: { start: 0.5, end: 0.1 },
-        scale: { start: 0.5, end: 0.2 },
+        scale: { start: 0.8, end: 0.8 },
         rotate: { min: -180, max: 180 },
-        lifespan: { min: 1600, max: 4600 },
+        lifespan: { min: 2600, max: 4600 },
         blendMode: 'NORMAL',
-        frequency: 80 ,
+        frequency: 200 ,
         bounce: 0,
         speedX: -10,
         on: true,
         maxParticles: 5000,
         collideBottom: true,
         x: {min: -30, max: 30 },
-        y: {min: -5, max: 10 },
+        y: {min: -15, max: 130},
         });
       o2_particles2.setDepth(1)
-      this.o2_emitter2.startFollow(this.floor,0,-110,false)
+      this.o2_emitter2.startFollow(this.floor,0,-105,false)
 
       var o2_particles3 = this.add.particles("cursor");
       this.o2_emitter3 = o2_particles3.createEmitter({
@@ -1200,7 +1202,7 @@ class mainScene {
     physics: {
       default: 'arcade',
       arcade: {
-          debug: true
+          debug: false
       }
   }
 });

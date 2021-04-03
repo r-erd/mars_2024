@@ -10,9 +10,13 @@ class mainScene {
 
     //============== FEATURES TO IMPLEMENT =================
 
-    //starlink sats 2.8 * 10m groß - starship 9m diameter - fix size
+    //EMIT EXPLOSION AT COLLISION
     //boring machine skin longer
     //maybe add hyperloops to underground (with driving teslas?)
+    //more satellite skins (square too)
+    //Fix text z - index (is currently below asteroids)
+    //fix scaling for small screens and add touch control / gyro control?
+    //add deathscreen info
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
@@ -42,15 +46,12 @@ class mainScene {
 
     // ================= OTHER
     //TODO embed in website
-    //TODO add skin selection / game mode (agility vs speed)
-    //TODO add crypto mode
-    //TODO replace skins with selfmade skins (rocket, asteroids, clouds, blackbird, spacetesla, boringmachine)
-    //TODO add credits for sound (zappsplat)
+    //TODO replace skins with selfmade skins (rocket, blackbird, spacetesla, boringmachine)
+
 
 
 
     preload() {
-      this.load.image('rocket', 'assets/rocket.png');
       this.load.image('starship', 'assets/starship.png');
       this.load.image('deathscreen', 'assets/deathscreen.png');
       this.load.image('light', 'assets/light.png');
@@ -69,7 +70,9 @@ class mainScene {
       this.load.image('grey_particle', 'assets/particle_grey.png');
       this.load.image('starlink', 'assets/starlink.png');
       this.load.image('cursor', 'assets/cursor.png');
-      this.load.image('cloud', 'assets/cloud.png');
+      this.load.image('cloud', 'assets/cloud1.png');
+      this.load.image('cloud2', 'assets/cloud2.png');
+      this.load.image('cloud3', 'assets/cloud3.png');
       this.load.image('blackbird', 'assets/blackbird.png');
       this.load.image('spacetesla', 'assets/spacetesla.png');
       this.load.image('boring', 'assets/boringmachine.png');
@@ -78,6 +81,14 @@ class mainScene {
     }
 
     create() {
+      /*
+      let width = window.screen.width
+      let { widthGame, heightGame } = this.sys.game.scale.gameSize;
+      if (width <= 700){
+        this.cameras.main.scrollX = 600 - widthGame/2 
+        console.log("small")
+      }
+      */
 
 
       this.boring = false
@@ -146,7 +157,8 @@ class mainScene {
 
 
       this.rocket = this.physics.add.sprite(600, 610, 'starship');
-      this.rocket.body.setSize(17,67,true); //hitbox
+      this.rocket.body.setSize(10,10,true); //hitbox
+      this.rocket.setOffset(12,75)
       this.rocket.setOrigin(0.5,1)
       this.rocket.setDepth(1)
       this.o2EmitterInit()
@@ -225,10 +237,12 @@ class mainScene {
         y: 610
         });
       this.propulsion_particles.setDepth(2)
+      //this.propulsion_emitter.startFollow(this.rocket,0,80,true)
 
       let style = { font: '20px Arial', fill: '#ffffff' };
       let style2 = { font: '30px Arial', fill: '#ffffff' };
       let style3 = { font: '15px Arial', fill: '#ffffff' };
+      let style4 = { font: '10px Arial', fill: '#ffffff' };
 
       this.force = 0;
       this.distanceY = 0;
@@ -247,9 +261,17 @@ class mainScene {
       this.debugText = this.add.text(20, 40, "test", style);
       this.thrustText = this.add.text(72, 700, 0, style);
       this.speedText = this.add.text(173, 700, 0, style);
+      this.speedTextUnit = this.add.text(173, 720, 0, style4);
+      this.altitudeTextUnit = this.add.text(273, 720, 0, style4);
+      this.thrustTextUnit = this.add.text(72, 720, 0, style4);
       this.distanceYText = this.add.text(273, 700, 0, style);
       this.tplus = this.add.text(520, 750, "T+00:00:00", style2);
       this.missionText = this.add.text(550, 779, "Mission Mars", style3);
+
+      this.speedTextUnit.setText("km/h")
+      this.altitudeTextUnit.setText("km")
+      this.thrustTextUnit.setText("%")
+
       if(arcade){
         this.missionText.setText("Mission Explore");
       } else {
@@ -491,6 +513,7 @@ class mainScene {
       
       //maybe combine sat and ast groups?
 
+      
       if(arcade){
         if(this.physics.overlap(this.rocket, this.asteroids)){
           this.hitSpaceObstacle()
@@ -500,6 +523,7 @@ class mainScene {
           this.hitSpaceObstacle()
         }
       }
+      
 
       
     }
@@ -664,20 +688,23 @@ class mainScene {
     }
 
     setSpeedPositions(){
-      if(Math.abs(this.force) < 10){
+      if(Math.abs(this.speedY) < 10){
         this.speedText.x = 175
         this.speedText.y = 700
+        console.log("1digits")
       }
         
 
-      if(Math.abs(this.force) >= 10){
-        this.speedText.x = 167
+      if(Math.abs(this.speedY) >= 10 && Math.abs(this.speedY) < 99){
+        this.speedText.x = 169
         this.speedText.y = 700
+        console.log("2digits")
       }
 
-      if(Math.abs(this.force) > 99){
-        this.speedText.x = 163
+      if(Math.abs(this.speedY) > 99){
+        this.speedText.x = 165
         this.speedText.y = 700
+        console.log("3digits")
       }
     }
 
@@ -800,10 +827,19 @@ class mainScene {
     }
 
     createSpaceObstacle(yCoord, xCoord){
-      if(this.distanceY < 50){
-        if (this.lookup() > 0.3)
+      if(this.distanceY < 30){
+        if (this.lookup() > 0.5)
           return;
-        this.cloud = this.physics.add.sprite(xCoord,yCoord, 'cloud');
+        
+        let cloudvariant = this.lookup()
+        if(cloudvariant < 0.33){
+          this.cloud = this.physics.add.sprite(xCoord,yCoord, 'cloud');
+        } else if (cloudvariant > 0.33 && cloudvariant < 0.66){
+          this.cloud = this.physics.add.sprite(xCoord,yCoord, 'cloud2');
+        } else {
+          this.cloud = this.physics.add.sprite(xCoord,yCoord, 'cloud3');
+        }
+
         this.cloud.setSize(40,80)
         this.clouds.add(this.cloud)
         this.cloud.alpha = this.lookup()
@@ -811,33 +847,39 @@ class mainScene {
         this.cloud.body.velocity.x = this.speedX
         this.cloud.setDepth(Math.floor(this.lookup() + 0.5))
 
-      } else if (this.distanceY < 100){
+      } else if (this.distanceY < 50){
+
+        //Flugzeuge?
+
+
+      } else if (this.distanceY < 120){ 
           
         this.starlink = this.physics.add.sprite(xCoord, yCoord,'starlink');
         this.satellites.add(this.starlink)
         this.starlink.body.velocity.y = this.speedY
         this.starlink.body.velocity.x = this.speedX
-        this.starlink.angle = this.lookup()*360 +1
+        //this.starlink.angle = this.lookup()*360 +1
 
-      } else if (this.distanceY > 150) {
+      } else if (this.distanceY > 120) {
 
         let type = Math.floor(this.lookup() *3)
         switch (type){
           case 0:
             this.asteroid = this.physics.add.sprite(xCoord, yCoord,'asteroid');
-            this.asteroid.body.setSize(90,80)
+            this.asteroid.body.setSize(95,85)
             break;
           case 1:
             this.asteroid = this.physics.add.sprite(xCoord, yCoord,'asteroidsmall');
-            this.asteroid.body.setSize(37,36)
+            this.asteroid.body.setSize(41,44)
             break;
           case 2:
             this.asteroid = this.physics.add.sprite(xCoord, yCoord,'asteroidverysmall');
-            this.asteroid.body.setSize(20,20)
+            this.asteroid.body.setSize(27,25)
             break;
         }
   
         this.asteroids.add(this.asteroid)
+        this.asteroid.angle = this.lookup() * 360
         this.asteroid.body.velocity.y = this.speedY
         this.asteroid.body.velocity.x = this.speedX
 
@@ -946,7 +988,7 @@ class mainScene {
 
       if(!arcade){
         if (this.thrust < 100  && (this.distanceY < 50 || this.distanceY > 70) && this.running && this.alive)
-          this.boosterSound.volume = Math.abs(this.thrust)/100
+          this.boosterSound.volume = Math.abs(this.thrust)/200
 
         if(!this.boosterSound.isPlaying && (this.distanceY < 50 || this.distanceY > 70) && this.alive){
           this.spaceshipSound.stop()
@@ -957,7 +999,7 @@ class mainScene {
       } else {
 
         if (this.thrust < 100  && this.distanceY < 50 && this.running && this.alive)
-          this.boosterSound.volume = Math.abs(this.thrust)/100
+          this.boosterSound.volume = Math.abs(this.thrust)/200
 
         if(!this.boosterSound.isPlaying && this.distanceY < 50  && this.alive){
           this.spaceshipSound.stop()
@@ -979,7 +1021,7 @@ class mainScene {
         this.running = false
         var timer3 = this.time.delayedCall(3000, ()=>{this.boosterSound.stop()}, null, this);
         this.spaceshipSound.play()
-        this.spaceshipSound.setVolume = 1
+        this.spaceshipSound.setVolume = 0.5
         
       }
     }
@@ -998,7 +1040,7 @@ class mainScene {
      this.satellites.children.each( function(p){
       p.body.velocity.x = x;
       p.body.velocity.y = y;
-      p.angle += 0.2 
+      //p.angle += 0.2 
     },this)
 
 
@@ -1138,12 +1180,30 @@ class mainScene {
 }
 
 
-new Phaser.Game({
-    width: 1200, // Width of the game in pixels
-    height: 800, // Height of the game in pixels
+  console.log("made this big")
+  new Phaser.Game({
+    width: 1200, // Width of the game in pixels (full width is 1200)
+    height: 800, // Height of the game in pixels (full height is 800)
     backgroundColor: '#000000', // The background color
     renderer: Phaser.AUTO,
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+      parent: 'game',
+      max: {
+        height: 800,
+        width: 1200
+        }
+    },
+
     scene: mainScene, // The name of the scene we created
-    physics: { default: 'arcade' }, // The physics engine to use
-    parent: 'game', // Create the game inside the <div id="game"> 
+    physics: {
+      default: 'arcade',
+      arcade: {
+          debug: true
+      }
+  }
 });
+
+
+

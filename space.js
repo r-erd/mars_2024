@@ -1,8 +1,5 @@
 var highscore = 0;
 var arcade = true //switches the acceleration / speed system and the mars-existence
-//restart on r
-//fly with arrow keys
-//change gamemode on m
 
 
 class mainScene {
@@ -14,15 +11,13 @@ class mainScene {
     //boring machine skin longer
     //maybe add hyperloops to underground (with driving teslas?)
     //more satellite skins (square too)
-    //Fix text z - index (is currently below asteroids)
-    //fix scaling for small screens and add touch control / gyro control?
-    //add deathscreen info
-    //add border-background (grey frame)
-    //fix o2 emitter (more y-axis variance?)
+    //add smartphone mode and "screen to small" message for small screens
+    //add keys 0 to 9 as thrust - level shortcuts
+    //add known bugs to the website
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
-    //TODO less time till the sats appear and directly after the asteroids, improve the way it gets harder (upper limit)
+    //TODO add planes and improve the way it gets harder (upper limit)
 
     //REAL MODE
     //TODO add mars at 1000 - land there ->  success + less asteroids on approach +dont spawn stuff IN mars
@@ -37,18 +32,13 @@ class mainScene {
     //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
     //TODO explosion sound sounds twice when asteroid is hit (on respawn again)
-    //TODO fix hitbox of the asteroids?!
-    //TODO clouds spawn mid screen (left and right spawns)
     //TODO position explosion particle origin 
-    //TODO shake sprite/position instead of shake camera? dont know
     //TODO fix ground hitbox (raise actual ground, not buildings, fix rocket hitbox (tip))
-    //TODO fix floating point altitude position display (and remove decimal if > 10)
-    //TODO the hitbox doesn't rotate with the rocket?!
     //TODO make mars texture higher
 
     // ================= OTHER
-    //TODO embed in website
     //TODO replace skins with selfmade skins (rocket, blackbird, spacetesla, boringmachine)
+    //improve ground skin for earth!
 
 
 
@@ -91,6 +81,12 @@ class mainScene {
         console.log("small")
       }
       */
+
+
+     var r3 = this.add.rectangle(1200/2, 800/2, 1200, 800);
+
+     r3.setStrokeStyle(2, 0x383838)
+     r3.setDepth(6)
 
 
       this.boring = false
@@ -269,6 +265,26 @@ class mainScene {
       this.distanceYText = this.add.text(273, 700, 0, style);
       this.tplus = this.add.text(520, 750, "T+00:00:00", style2);
       this.missionText = this.add.text(550, 779, "Mission Mars", style3);
+      this.deathText = this.add.text(525, 350, "Lost Signal", style2);
+      this.deathText2 = this.add.text(415, 384, "", style3);
+      this.deathText.alpha = 0;
+      this.deathText2.alpha = 0;
+
+      this.deathText.setDepth(6)
+      this.deathText2.setDepth(6)
+      this.deathscreen.setDepth(5)
+
+      this.highscoreText.setDepth(4)
+      this.debugText.setDepth(4)
+      this.thrustText.setDepth(4)
+      this.speedText.setDepth(4)
+      this.speedTextUnit.setDepth(4)
+      this.missionText.setDepth(4)
+      this.altitudeTextUnit.setDepth(4)
+      this.thrustTextUnit.setDepth(4)
+      this.distanceYText.setDepth(4)
+      this.tplus.setDepth(4)
+
 
       this.speedTextUnit.setText("km/h")
       this.altitudeTextUnit.setText("km")
@@ -518,10 +534,14 @@ class mainScene {
       
       if(arcade){
         if(this.physics.overlap(this.rocket, this.asteroids)){
+          this.explosionSound.play()
+          this.deathText2.setText("- rapid unscheduled disassembly due to a collison -")
           this.hitSpaceObstacle()
         }
   
         if(this.physics.overlap(this.rocket, this.satellites)){
+          this.explosionSound.play()
+          this.deathText2.setText("- rapid unscheduled disassembly due to a collison -")
           this.hitSpaceObstacle()
         }
       }
@@ -573,7 +593,11 @@ class mainScene {
     }
 
     hitSpaceObstacle(){
-      this.explosionSound.play()
+      this.explosion_emitter.active = true;
+      this.explosion_emitter.on = true;
+      this.explosion_emitter.explode(100)
+      this.explosion_emitter.start()
+
       this.propulsion_emitter.on = false;
       this.propulsion_emitter.killAll()
       this.force = 0
@@ -583,14 +607,13 @@ class mainScene {
       this.refreshVelocity(0,0)
 
       this.alive = false;
-      console.log("hit asteroid!")
-      this.explosion_emitter.start()
+      console.log("hit something!")
+
+
       this.spaceshipSound.stop()
       this.boosterSound.stop()
       this.rocket.destroy()
-      this.explosion_emitter.active = true;
-      this.explosion_emitter.on = true;
-      this.explosion_emitter.explode(100)
+
       let timer4 = this.time.delayedCall(450, ()=>{
         this.tweens.add({
           targets:  this.deathscreen,
@@ -599,8 +622,12 @@ class mainScene {
         });
       }, null, this);
 
+      var timerr = this.time.delayedCall(1000, ()=>{
+        this.deathText.alpha = 1;
+        this.deathText2.alpha = 1;
+        }, null, this);
       var timer = this.time.delayedCall(250, ()=>{this.explosion_emitter.on = false;}, null, this);
-      var timer2 = this.time.delayedCall(2000, ()=>{this.restart()}, null, this);
+      var timer2 = this.time.delayedCall(3000, ()=>{this.restart()}, null, this);
     }
 
     setThrustPositions(){
@@ -833,6 +860,12 @@ class mainScene {
         if (this.lookup() > 0.5)
           return;
         
+        if(xCoord > 0){
+          xCoord += 200
+        } else {
+          xCoord -= 200
+        }
+
         let cloudvariant = this.lookup()
         if(cloudvariant < 0.33){
           this.cloud = this.physics.add.sprite(xCoord,yCoord, 'cloud');
@@ -893,10 +926,14 @@ class mainScene {
       //mars
       if(!arcade){
         if(Math.abs(this.speedY) > 15 && this.distanceY >= 98.7){
+          this.explosionSound.play()
+          this.deathText2.setText("-  the velocity on touchdown was too high -")
           this.hitSpaceObstacle()
         }
   
         if(Math.abs(this.rocket.angle) < 170 && this.distanceY >= 98.7){
+          this.explosionSound.play()
+          this.deathText2.setText("- the angle on touchdown was too steep -")
           this.hitSpaceObstacle()
         }
 
@@ -914,10 +951,14 @@ class mainScene {
 
       //earth
       if(Math.abs(this.speedY) > 15 && this.distanceY <= 0.01){
+        this.explosionSound.play()
+        this.deathText2.setText("- the velocity on touchdown was (way) too high -")
         this.hitSpaceObstacle()
       }
 
       if(Math.abs(this.rocket.angle) > 10 && this.distanceY <= 0.01){
+        this.explosionSound.play()
+        this.deathText2.setText("- the rocket touched the earth in an inappropriate way -")
         this.hitSpaceObstacle()
       }
 
@@ -933,8 +974,13 @@ class mainScene {
     }
 
     checkAirspaceBounds(){
-      if(Math.abs(this.distanceX) > 8.5 && this.distanceY < 2)  //display notification, you left the assigned airspace and were shot down!
+
+      if(Math.abs(this.distanceX) > 8.5 && this.distanceY < 2){
+        this.explosionSound.play()
+                                 
+        this.deathText2.setText("- you left the assigned airspace and triggered the LAS -")
         this.hitSpaceObstacle()
+      } 
     }
 
     spawnNewObstaclesYAxis(){
@@ -959,6 +1005,8 @@ class mainScene {
     }
 
     restart(){
+      this.deathText.alpha = 1;
+      this.deathText2.alpha = 1;
       this.scene.restart()
       this.spaceshipSound.stop()
       this.boosterSound.stop()

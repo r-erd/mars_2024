@@ -1,5 +1,7 @@
 var highscore = 0;
 var arcade = true //switches the acceleration / speed system and the mars-existence
+var frameTime = 0;
+var gameTick = 0;
 
 
 class mainScene {
@@ -81,6 +83,7 @@ class mainScene {
         console.log("small")
       }
       */
+
 
 
      var r3 = this.add.rectangle(1200/2, 800/2, 1200, 800);
@@ -256,7 +259,6 @@ class mainScene {
       this.thrust = 0
 
       this.highscoreText = this.add.text(20, 20, 'Highscore: ' + Math.floor(highscore), style);
-      this.debugText = this.add.text(20, 40, "test", style);
       this.thrustText = this.add.text(72, 700, 0, style);
       this.speedText = this.add.text(173, 700, 0, style);
       this.speedTextUnit = this.add.text(173, 720, 0, style4);
@@ -275,7 +277,6 @@ class mainScene {
       this.deathscreen.setDepth(5)
 
       this.highscoreText.setDepth(4)
-      this.debugText.setDepth(4)
       this.thrustText.setDepth(4)
       this.speedText.setDepth(4)
       this.speedTextUnit.setDepth(4)
@@ -356,8 +357,19 @@ class mainScene {
 
     }
 
-    update() {
+    update(time, delta) {
 
+      frameTime += delta
+
+      if (frameTime > 16.5) {  
+          frameTime = 0;
+          gameTick++;
+          this.updateScene()
+      } 
+    }
+
+
+    updateScene(){
       if(this.distanceY > 0 && this.speedY > -150 && !arcade){
         if(this.distanceY < 60){
           //earth gravity
@@ -372,7 +384,6 @@ class mainScene {
         this.force += this.thrust/1000
       }
 
-      this.debugText.setText("debug:" + this.speedY)
 
       if(arcade){
         this.speedText.setText(Math.round(this.force*10));
@@ -545,9 +556,6 @@ class mainScene {
           this.hitSpaceObstacle()
         }
       }
-      
-
-      
     }
 
     //redo for real mode with no asts only sats and collision with sats enabled (not immovable) (maybe?)

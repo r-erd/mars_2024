@@ -35,7 +35,7 @@ class mainScene {
     //TODO explosion sound too late when shot down
     //TODO explosion sound sounds twice when asteroid is hit (on respawn again)
     //TODO position explosion particle origin 
-    //TODO fix ground hitbox (raise actual ground, not buildings, fix rocket hitbox (tip))
+    //TODO fix ground hitbox
     //TODO make mars texture higher
 
     // ================= OTHER
@@ -622,7 +622,7 @@ class mainScene {
       this.boosterSound.stop()
       this.rocket.destroy()
 
-      let timer4 = this.time.delayedCall(450, ()=>{
+      this.time.delayedCall(450, ()=>{
         this.tweens.add({
           targets:  this.deathscreen,
           alpha:   1,
@@ -630,12 +630,12 @@ class mainScene {
         });
       }, null, this);
 
-      var timerr = this.time.delayedCall(1000, ()=>{
+      this.time.delayedCall(1000, ()=>{
         this.deathText.alpha = 1;
         this.deathText2.alpha = 1;
         }, null, this);
-      var timer = this.time.delayedCall(250, ()=>{this.explosion_emitter.on = false;}, null, this);
-      var timer2 = this.time.delayedCall(3000, ()=>{this.restart()}, null, this);
+      this.time.delayedCall(250, ()=>{this.explosion_emitter.on = false;}, null, this);
+      this.time.delayedCall(3000, ()=>{this.restart()}, null, this);
     }
 
     setThrustPositions(){
@@ -1013,8 +1013,8 @@ class mainScene {
     }
 
     restart(){
-      this.deathText.alpha = 1;
-      this.deathText2.alpha = 1;
+      this.deathText.alpha = 0;
+      this.deathText2.alpha = 0;
       this.scene.restart()
       this.spaceshipSound.stop()
       this.boosterSound.stop()
@@ -1077,7 +1077,7 @@ class mainScene {
         });
 
         this.running = false
-        var timer3 = this.time.delayedCall(3000, ()=>{this.boosterSound.stop()}, null, this);
+        this.time.delayedCall(3000, ()=>{this.boosterSound.stop()}, null, this);
         this.spaceshipSound.play()
         this.spaceshipSound.setVolume = 0.5
         

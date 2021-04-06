@@ -2,24 +2,22 @@ var highscore = 0;
 var arcade = true //switches the acceleration / speed system and the mars-existence
 var frameTime = 0;
 var gameTick = 0;
-
+var DEBUG = false;
 
 class mainScene {
 
 
     //============== FEATURES TO IMPLEMENT =================
 
-    //EMIT EXPLOSION AT COLLISION
+    //destroy plane on collision
     //boring machine skin longer
     //maybe add hyperloops to underground (with driving teslas?)
-    //more satellite skins (square too)
     //add smartphone mode and "screen to small" message for small screens
-    //add keys 0 to 9 as thrust - level shortcuts
-    //add known bugs to the website
+    //add known bugs + 0-9 controls to the website
 
     //ARCADE MODE
     //TODO add higher speed -> less left/right tilting for arcade mode OR no breaking!???
-    //TODO add planes and improve the way it gets harder (upper limit)
+    //TODO improve the way it gets harder (upper limit)
 
     //REAL MODE
     //TODO add mars at 1000 - land there ->  success + less asteroids on approach +dont spawn stuff IN mars
@@ -34,13 +32,18 @@ class mainScene {
     //================ BUGS TO FIX ================
     //TODO explosion sound too late when shot down
     //TODO explosion sound sounds twice when asteroid is hit (on respawn again)
-    //TODO position explosion particle origin 
     //TODO fix ground hitbox
     //TODO make mars texture higher
+    //TODO check performance / lagg? remove clouds and planes?
 
     // ================= OTHER
     //TODO replace skins with selfmade skins (rocket, blackbird, spacetesla, boringmachine)
-    //improve ground skin for earth!
+    //better ground building skins
+    //change overlay (dont display "mars" in explore mode, what for?)
+    //add idle sound (at ground, not starting, thrust 0 (zischen?))
+    //add more plane skins (different colors)
+    //add the sat skins
+  
 
 
 
@@ -71,6 +74,9 @@ class mainScene {
       this.load.image('spacetesla', 'assets/spacetesla.png');
       this.load.image('boring', 'assets/boringmachine.png');
       this.load.image('mars', 'assets/mars.png');
+      this.load.image('plane1-left', 'assets/plane1-left.png');
+      this.load.image('plane2-right', 'assets/plane2-right.png');
+      this.load.image('plane3-left', 'assets/plane3-left.png');
 
     }
 
@@ -83,6 +89,10 @@ class mainScene {
         console.log("small")
       }
       */
+
+
+
+
 
 
 
@@ -333,11 +343,44 @@ class mainScene {
       this.asteroids = this.physics.add.group(); 
       this.satellites = this.physics.add.group(); 
       this.clouds = this.physics.add.group();
+      this.planes = this.physics.add.group();
+
+
+      let cc = Math.floor(Math.random() *3)
+      for(let i = 0; i<cc; i++){
+        let cloudvariant = this.lookup()
+        let xp = 500 + (Math.random() * 400) -200
+        let yp = 300 + (Math.random() * 150) -70
+        if(cloudvariant < 0.33){
+          this.cloud = this.physics.add.sprite(xp,yp, 'cloud');
+        } else if (cloudvariant > 0.33 && cloudvariant < 0.66){
+          this.cloud = this.physics.add.sprite(xp,yp, 'cloud2');
+        } else {
+          this.cloud = this.physics.add.sprite(xp,yp, 'cloud3');
+        }
+        this.cloud.setSize(40,80)
+        this.clouds.add(this.cloud)
+        this.cloud.alpha = this.lookup()
+        this.cloud.body.velocity.y = this.speedY
+        this.cloud.body.velocity.x = this.speedX
+        this.cloud.setDepth(Math.floor(this.lookup() + 0.5))
+      }
+
 
 
       this.arrow = this.input.keyboard.createCursorKeys();
       this.rkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
       this.mkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+      this.zeroKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
+      this.oneKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+      this.twoKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+      this.threeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
+      this.fourKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR);
+      this.fiveKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE);
+      this.sixKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
+      this.sevenKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SEVEN);
+      this.eightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.EIGHT);
+      this.nineKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NINE);
 
 
       this.timer = this.time.addEvent({
@@ -454,6 +497,38 @@ class mainScene {
       if(this.rkey.isDown)
         this.restart()
 
+      if(this.zeroKey.isDown)
+        this.thrust = 0;
+      
+      if(this.oneKey.isDown)
+        this.thrust = 10;
+
+      if(this.twoKey.isDown)
+        this.thrust = 20;
+
+      if(this.threeKey.isDown)
+        this.thrust = 30;
+
+      if(this.fourKey.isDown)
+        this.thrust = 40;
+
+      if(this.fiveKey.isDown)
+        this.thrust = 50;
+
+      if(this.sixKey.isDown)
+        this.thrust = 60;
+
+      if(this.sevenKey.isDown)
+        this.thrust = 70;
+
+      if(this.eightKey.isDown)
+        this.thrust = 80;
+
+      if(this.nineKey.isDown)
+        this.thrust = 90;
+
+      this.thrustText.setText(this.thrust)
+        
       if(Phaser.Input.Keyboard.JustDown(this.mkey) && this.distanceY == 0){
         arcade = !arcade
 
@@ -471,14 +546,12 @@ class mainScene {
 
         if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 0){
           this.thrust -= 1
-          this.thrustText.setText(this.thrust)
           //decrease thrust
         }
 
         if(this.arrow.up.isDown && this.alive && this.thrust < 100){
           this.started = true
           this.thrust += 1
-          this.thrustText.setText(this.thrust)
           //increase thrust
         }
 
@@ -486,14 +559,12 @@ class mainScene {
 
         if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > -50){
           this.thrust -= 1
-          this.thrustText.setText(this.thrust)
           //decrease thrust
         }
 
         if(this.arrow.up.isDown && this.alive && this.thrust < 100){
           this.started = true
           this.thrust += 1
-          this.thrustText.setText(this.thrust)
           //increase thrust
         }
       }
@@ -551,6 +622,12 @@ class mainScene {
         }
   
         if(this.physics.overlap(this.rocket, this.satellites)){
+          this.explosionSound.play()
+          this.deathText2.setText("- rapid unscheduled disassembly due to a collison -")
+          this.hitSpaceObstacle()
+        }
+
+        if(this.physics.overlap(this.rocket, this.planes)){
           this.explosionSound.play()
           this.deathText2.setText("- rapid unscheduled disassembly due to a collison -")
           this.hitSpaceObstacle()
@@ -728,20 +805,17 @@ class mainScene {
       if(Math.abs(this.speedY) < 10){
         this.speedText.x = 175
         this.speedText.y = 700
-        console.log("1digits")
       }
         
 
       if(Math.abs(this.speedY) >= 10 && Math.abs(this.speedY) < 99){
         this.speedText.x = 169
         this.speedText.y = 700
-        console.log("2digits")
       }
 
       if(Math.abs(this.speedY) > 99){
         this.speedText.x = 165
         this.speedText.y = 700
-        console.log("3digits")
       }
     }
 
@@ -865,6 +939,34 @@ class mainScene {
 
     createSpaceObstacle(yCoord, xCoord){
       if(this.distanceY < 30){
+
+        if(this.distanceY > 2){
+          if (this.lookup() > 0.5)
+            return;
+
+          if (Math.random() < 0.5){
+            console.log("spawned planes " + xCoord +" " + yCoord)
+            this.plane1 = this.physics.add.sprite(xCoord,yCoord,'plane1-left');
+            this.plane1.state = "left"
+            this.planes.add(this.plane1)
+            this.plane1.body.velocity.x =  -80 - Math.random() * 60
+            this.plane1.body.velocity.y = this.speedY
+            this.plane1.setScale(0.15)
+            this.plane1.setDepth(1)
+
+          } else {
+            console.log("spawned planes " + xCoord +" " + yCoord)
+            this.plane2 = this.physics.add.sprite(xCoord,yCoord,'plane2-right');
+            this.plane2.state = "right"
+            this.planes.add(this.plane2)
+            this.plane2.setScale(0.25)
+            this.plane2.setDepth(1)
+            this.plane2.body.velocity.x = 80 + Math.random() * 40
+            this.plane2.body.velocity.y = this.speedY
+
+          }
+        }
+
         if (this.lookup() > 0.5)
           return;
         
@@ -889,11 +991,6 @@ class mainScene {
         this.cloud.body.velocity.y = this.speedY
         this.cloud.body.velocity.x = this.speedX
         this.cloud.setDepth(Math.floor(this.lookup() + 0.5))
-
-      } else if (this.distanceY < 50){
-
-        //Flugzeuge?
-
 
       } else if (this.distanceY < 120){ 
           
@@ -1086,7 +1183,6 @@ class mainScene {
 
     refreshVelocity(x, y){
 
-      console.log("changed velo")
       if (isNaN(x) || isNaN(y))
         return;
 
@@ -1106,6 +1202,21 @@ class mainScene {
       p.body.velocity.x = x;
       p.body.velocity.y = y;
     },this)
+
+    this.planes.children.each( function(p){
+
+      if(p.state == "right"){
+        //goes to the right
+        p.body.velocity.x = x + 80
+      } else {
+        //goes to the left
+        p.body.velocity.x = x - 80
+      }
+
+
+      p.body.velocity.y = this.speedY
+    },this)
+
 
 
       this.center_particle.body.velocity.y = y;
@@ -1131,8 +1242,6 @@ class mainScene {
     }
 
     refreshSkyColor(){
-
-      console.log("changed skycolor")
       if (this.distanceY < 68){
         this.blue = 0.68 - (this.distanceY/100)
       }
@@ -1177,7 +1286,6 @@ class mainScene {
     }
 
     rgbToHex(r, g, b) {
-      console.log("called rgbToHex")
       r = r.toString(16);
       g = g.toString(16);
       b = b.toString(16);
@@ -1188,7 +1296,6 @@ class mainScene {
         g = "0" + g;
       if (b.length == 1)
         b = "0" + b;
-      console.log("0x" + r + g + b)
       return "0x" + r + g + b;
     }
 
@@ -1238,7 +1345,6 @@ class mainScene {
 }
 
 
-  console.log("made this big")
   new Phaser.Game({
     width: 1200, // Width of the game in pixels (full width is 1200)
     height: 800, // Height of the game in pixels (full height is 800)
@@ -1258,7 +1364,7 @@ class mainScene {
     physics: {
       default: 'arcade',
       arcade: {
-          debug: false
+          debug: DEBUG
       }
   }
 });

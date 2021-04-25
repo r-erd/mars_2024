@@ -498,7 +498,7 @@ class mainScene {
         this.restart()
 
       if(this.zeroKey.isDown)
-        this.thrust = 0;
+        this.thrust = 2;
       
       if(this.oneKey.isDown)
         this.thrust = 10;
@@ -529,6 +529,7 @@ class mainScene {
 
       this.thrustText.setText(this.thrust)
         
+      /*
       if(Phaser.Input.Keyboard.JustDown(this.mkey) && this.distanceY == 0){
         arcade = !arcade
 
@@ -538,6 +539,7 @@ class mainScene {
           this.missionText.setText("Mission Mars");
         }
       }
+      */
 
 
 
@@ -557,7 +559,7 @@ class mainScene {
 
       } else {
 
-        if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > -50){
+        if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 2){
           this.thrust -= 1
           //decrease thrust
         }

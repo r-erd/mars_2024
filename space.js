@@ -61,6 +61,7 @@ class mainScene {
       this.load.audio('explosionSound', 'assets/explosion.wav');
       this.load.audio('spaceshipSound', 'assets/spaceship.mp3');
       this.load.audio('boosterSound', 'assets/booster.mp3');
+      this.load.audio('airHiss', 'assets/airhiss.mp3');
       this.load.image('explosion_particle', 'assets/particle_red.png');
       this.load.image('propulsion_particle', 'assets/particle_blue.png');
       this.load.image('sand_particle', 'assets/particle_sand.png');
@@ -161,8 +162,11 @@ class mainScene {
 
       this.boosterSound = this.sound.add('boosterSound', audioConfig);
       this.spaceshipSound = this.sound.add('spaceshipSound', audioConfig);
+      this.airHiss = this.sound.add('airHiss', audioConfig);
       this.explosionSound = this.sound.add('explosionSound');
       this.explosionSound.setVolume(0.2); 
+      this.airHiss.setVolume(0.1)
+      this.airHiss.play()
       this.spaceshipSound.stop()
       this.boosterSound.stop()
 
@@ -449,7 +453,6 @@ class mainScene {
       //================== LOW HEIGHT CHECKS
 
 
-
       if(this.distanceY < 100){
         this.soundManager()
         this.addTurbolences()
@@ -462,6 +465,15 @@ class mainScene {
           this.o2_emitter.stop()
           this.o2_emitter2.stop()
           this.o2_emitter3.stop()
+
+          this.tweens.add({
+            targets:  this.airHiss,
+            volume:   0,
+            duration: 3000
+          });
+          
+          this.time.delayedCall(3000, ()=>{this.airHiss.stop()}, null, this);
+
           this.fog = false
         }
       }
@@ -1157,6 +1169,7 @@ class mainScene {
 
         if (this.thrust < 100  && this.distanceY < 50 && this.running && this.alive)
           this.boosterSound.volume = Math.abs(this.thrust)/200
+
 
         if(!this.boosterSound.isPlaying && this.distanceY < 50  && this.alive){
           this.spaceshipSound.stop()

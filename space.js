@@ -472,7 +472,7 @@ class mainScene {
         this.setDustEmitterCheck()
         this.blackbirdEgg()
 
-        if(this.hiss){
+        if(this.hiss && this.thrust != 0){
           this.tweens.add({
             targets:  this.airHiss,
             volume:   0,

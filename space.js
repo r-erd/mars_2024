@@ -1201,6 +1201,7 @@ class mainScene {
       this.distanceY = 0
       this.speedY = 0
       this.propulsion_emitter.on = false;
+      this.airHiss.stop()
     }
 
     addTurbolences(){

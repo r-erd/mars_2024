@@ -77,7 +77,15 @@ class mainScene {
       this.load.image('mars', 'assets/mars.png');
       this.load.image('plane1-left', 'assets/plane1-left.png');
       this.load.image('plane2-right', 'assets/plane2-right.png');
-      this.load.image('plane3-left', 'assets/plane3-left.png');
+
+      this.load.image('plane3-left-green', 'assets/plane3-left-green.png');
+      this.load.image('plane3-left-blue', 'assets/plane3-left-blue.png');
+      this.load.image('plane3-left-red', 'assets/plane3-left-red.png');
+
+      this.load.image('plane3-right-green', 'assets/plane3-right-green.png');
+      this.load.image('plane3-right-blue', 'assets/plane3-right-blue.png');
+      this.load.image('plane3-right-red', 'assets/plane3-right-red.png');
+
 
     }
 
@@ -107,6 +115,7 @@ class mainScene {
       this.random = Math.random()
       this.eggOne = false;
       this.eggTwo = false;
+      this.hiss = true;
       this.i=1e6
 
 
@@ -429,6 +438,8 @@ class mainScene {
         this.refreshVelocity(this.speedX,this.speedY)
       } else {
         this.force += this.thrust/1000
+        if(this.force > 70) this.force = 70;
+        //SPEEDLIMIT
       }
 
 
@@ -461,11 +472,7 @@ class mainScene {
         this.setDustEmitterCheck()
         this.blackbirdEgg()
 
-        if((this.distanceY > 0.5 && this.fog == true) || this.thrust != 0 ){
-          this.o2_emitter.stop()
-          this.o2_emitter2.stop()
-          this.o2_emitter3.stop()
-
+        if(this.hiss){
           this.tweens.add({
             targets:  this.airHiss,
             volume:   0,
@@ -473,6 +480,13 @@ class mainScene {
           });
           
           this.time.delayedCall(3000, ()=>{this.airHiss.stop()}, null, this);
+          this.hiss = false;
+        }
+
+        if((this.distanceY > 0.5 && this.fog == true) || this.thrust != 0 ){
+          this.o2_emitter.stop()
+          this.o2_emitter2.stop()
+          this.o2_emitter3.stop()
 
           this.fog = false
         }
@@ -571,7 +585,7 @@ class mainScene {
 
       } else {
 
-        if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 2){
+        if(this.arrow.down.isDown && this.distanceY >= 0 && this.alive && this.thrust > 1){
           this.thrust -= 1
           //decrease thrust
         }
@@ -955,13 +969,41 @@ class mainScene {
       if(this.distanceY < 30){
 
         if(this.distanceY > 2){
-          if (this.lookup() > 0.5)
-            return;
 
-          if (Math.random() < 0.5){
+        let color = this.lookup();
+        let direction = this.lookup();
+        let size = this.lookup();
+
+          if (size < 0.5){
             console.log("spawned planes " + xCoord +" " + yCoord)
-            this.plane1 = this.physics.add.sprite(xCoord,yCoord,'plane1-left');
-            this.plane1.state = "left"
+
+              //add the smaller plane here....
+            if(direction < 0.5){
+
+              if (color < 0.3){
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-blue');
+              } else if(color < 0.66){
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-red');
+              } else {
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-green');
+              }
+
+              this.plane1.state = "left"
+            } else {
+
+              if (color < 0.3){
+
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-blue');
+              } else if(color < 0.66){
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-red');
+              } else {
+                this.plane1 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-green');
+              }
+  
+              this.plane1.state = "right"
+
+            }
+
             this.planes.add(this.plane1)
             this.plane1.body.velocity.x =  -80 - Math.random() * 60
             this.plane1.body.velocity.y = this.speedY
@@ -970,8 +1012,34 @@ class mainScene {
 
           } else {
             console.log("spawned planes " + xCoord +" " + yCoord)
-            this.plane2 = this.physics.add.sprite(xCoord,yCoord,'plane2-right');
-            this.plane2.state = "right"
+
+            if(direction < 0.5){
+
+              if (color < 0.3){
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-blue');
+              } else if(color < 0.66){
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-red');
+              } else {
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-left-green');
+              }
+
+              this.plane2.state = "left"
+            } else {
+
+              if (color < 0.3){
+
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-blue');
+              } else if(color < 0.66){
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-red');
+              } else {
+                this.plane2 = this.physics.add.sprite(xCoord,yCoord, 'plane3-right-green');
+              }
+  
+              this.plane2.state = "right"
+
+            }
+
+
             this.planes.add(this.plane2)
             this.plane2.setScale(0.25)
             this.plane2.setDepth(1)
@@ -1138,7 +1206,7 @@ class mainScene {
 
     addTurbolences(){
 
-      if(arcade && this.distanceY > 60)
+      if(arcade && this.distanceY > 8)
         return;
 
       if(this.distanceY > 60 && this.distanceY < 70)
@@ -1191,7 +1259,7 @@ class mainScene {
         this.running = false
         this.time.delayedCall(3000, ()=>{this.boosterSound.stop()}, null, this);
         this.spaceshipSound.play()
-        this.spaceshipSound.setVolume = 0.5
+        this.spaceshipSound.setVolume = 0.4
         
       }
     }

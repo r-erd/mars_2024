@@ -472,7 +472,7 @@ class mainScene {
         this.setDustEmitterCheck()
         this.blackbirdEgg()
 
-        if(this.hiss && this.thrust != 0){
+        if(this.airHiss.isPlaying && this.thrust != 0){
           this.tweens.add({
             targets:  this.airHiss,
             volume:   0,
@@ -480,7 +480,6 @@ class mainScene {
           });
           
           this.time.delayedCall(3000, ()=>{this.airHiss.stop()}, null, this);
-          this.hiss = false;
         }
 
         if((this.distanceY > 0.5 && this.fog == true) || this.thrust != 0 ){

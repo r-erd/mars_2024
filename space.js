@@ -161,6 +161,7 @@ class mainScene {
       this.force = 0;
 
       var audioConfig = {
+        volume: 0.03,
         mute: false,
         rate: 1,
         detune: 0,
@@ -173,8 +174,8 @@ class mainScene {
       this.spaceshipSound = this.sound.add('spaceshipSound', audioConfig);
       this.airHiss = this.sound.add('airHiss', audioConfig);
       this.explosionSound = this.sound.add('explosionSound');
-      this.explosionSound.setVolume(0.2); 
-      this.airHiss.setVolume(0.1)
+      this.explosionSound.setVolume(0.025); 
+      this.airHiss.setVolume(0.02)
       this.airHiss.play()
       this.spaceshipSound.stop()
       this.boosterSound.stop()
@@ -1225,7 +1226,7 @@ class mainScene {
 
       if(!arcade){
         if (this.thrust < 100  && (this.distanceY < 50 || this.distanceY > 70) && this.running && this.alive)
-          this.boosterSound.volume = Math.abs(this.thrust)/200
+          this.boosterSound.volume = Math.abs(this.thrust)/2000
 
         if(!this.boosterSound.isPlaying && (this.distanceY < 50 || this.distanceY > 70) && this.alive){
           this.spaceshipSound.stop()
@@ -1236,7 +1237,7 @@ class mainScene {
       } else {
 
         if (this.thrust < 100  && this.distanceY < 50 && this.running && this.alive)
-          this.boosterSound.volume = Math.abs(this.thrust)/200
+          this.boosterSound.volume = Math.abs(this.thrust)/2000
 
 
         if(!this.boosterSound.isPlaying && this.distanceY < 50  && this.alive){
@@ -1259,7 +1260,7 @@ class mainScene {
         this.running = false
         this.time.delayedCall(3000, ()=>{this.boosterSound.stop()}, null, this);
         this.spaceshipSound.play()
-        this.spaceshipSound.setVolume = 0.4
+        this.spaceshipSound.setVolume = 0.07
         
       }
     }

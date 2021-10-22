@@ -15,8 +15,6 @@
          url('fonts/D-DIN.otf') format('otf'), 
   }
 
-
-
   .logo {
     height: 2vw;
     display: inline-block;
@@ -100,12 +98,6 @@ button.below:hover{
   color: black;
 }
 
-
-
-
- 
-
-
   body::-webkit-scrollbar {
     display: none;
   }
@@ -137,6 +129,13 @@ button.below:hover{
     font-family: 'ddinbold', Fallback, sans-serif;
     font-size: 14px;
     
+  }
+
+  svg {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    display:inline-block;
   }
 
   

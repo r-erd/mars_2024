@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <htmllang style="scroll-behavior: smooth;">
 
-<head>
-    <link rel="Shortcut Icon" type="image/ico" href="assets/icon.ico">
-    <link rel="icon" type="image/x-icon" href="assets/icon.ico">
-    <meta charset="UTF-8">
-    <title>SpaceY</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="space.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-       <link rel="stylesheet" href="styles.css">
+    <head>
+        <link rel="Shortcut Icon" type="image/ico" href="assets/icon.ico">
+        <link rel="icon" type="image/x-icon" href="assets/icon.ico">
+        <meta charset="UTF-8">
+        <title>SpaceY</title>
+        <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script src="space.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles.css">
 
-       <script>history.scrollRestoration = "manual"</script>
-       <script>
+        <script>history.scrollRestoration = "manual"</script>
+        <script>
             $('body').css('padding-top', $('.smart-scroll').outerHeight() + 'px')
 
             if (true) {
                 console.log("SCROLLEVENT")
                 var last_scroll_top = 0;
-                $(window).on('scroll', function() {
+                $(window).on('scroll', function () {
                     scroll_top = $(this).scrollTop();
-                    if(scroll_top < last_scroll_top) {
+                    if (scroll_top < last_scroll_top) {
                         $('.smart-scroll').removeClass('scrolled-down').addClass('scrolled-up');
                     }
                     else {
@@ -31,253 +31,284 @@
                     last_scroll_top = scroll_top;
                 });
             }
-       </script>
-</head>
+        </script>
+    </head>
 
 
 
-<body style="background-color: black;">
+    <body style="background-color: black;">
 
+        <div class="d-none d-lg-block">
 
-
-    <div style="height:0vh;">
-        <img src="assets/world2.jpg"
-            style="width: 100vw; height:100vh ; object-fit: cover; z-index: -1; position: absolute;"
-            alt="picture of earth from above">
-    </div>
-
-    <div class="row smart-scroll">
-        <div class="mx-left" style="margin-left: 15vw; height: fit-content;">
-            <nav class="navbar navbar-light" style="padding-top: 3vh; color:white;">
-                <img class="logo" src="assets/spacey.png">
-
-
-                <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Eurasian_eagle-owl" class=" nav-item nav-link text-white mr-2 left"> EAGLEOWL 10</a>
-                  </div>
-
-                  <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Great_horned_owl" class=" nav-item nav-link text-white mr-2 left"> GREAT HORNED OWL</a>
-                  </div>
-
-                  <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Knight" class=" nav-item nav-link text-white mr-2 left"> KNIGHT</a>
-                  </div>
-
-                  <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="https://letmegooglethat.com/?q=moonboat" class=" nav-item nav-link text-white mr-2 left"> MOONBOAT </a>
-                  </div>
-
-                  <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Human_spaceflight" class=" nav-item nav-link text-white mr-2 left"> HUMAN SPACEFLIGHT</a>
-                  </div>
-
-                  <div class="link-background" style="padding-right: 1vw;">
-                    <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left"> ROCKETPOOL</a>
-                  </div>
-                
-                <!-- underline go to right? -->
-            </nav>
-        </div>
-
-
-    </div>
-
-
-
-    
-
-
-
-    <div class="container-fluid" >
-        <div class="row">
-            <div class="col-2" >
-     
+            <div style="height:0vh;">
+                <img src="assets/world2.jpg"
+                    style="width: 100vw; height:100vh ; object-fit: cover; z-index: -1; position: absolute;"
+                    alt="picture of earth from above">
             </div>
-            <div class="col-8">
-                <div class="d-flex justify-content-left align-items-end" style="height: 100vh; padding-bottom: 15vh;">
+
+            <div class="row smart-scroll">
+                <div class="mx-left" style="margin-left: 15vw; height: fit-content;">
+                    <nav class="navbar navbar-light" style="padding-top: 3vh; color:white;">
+                        <img class="logo" src="assets/spacey.png">
 
 
-                    <div>
-                        <h5 class="text-white m-2" style="display: block;"> UPCOMING LAUNCH </h5>
-
-                        <h3 class="text-white m-2" style="display: block; font-size: 6vh;"> MARS MISSION </h3>
-
-                        <div class="button-background">
-                            <a href="#gamecontainer"> 
-                                <button class="btn btn-light m-2 below" style="background-color: transparent; width: 170px; height: 50px; border-radius: 0;"> PLAY </button>
-                            </a> 
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Eurasian_eagle-owl"
+                                class=" nav-item nav-link text-white mr-2 left"> EAGLEOWL 10</a>
                         </div>
 
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Great_horned_owl"
+                                class=" nav-item nav-link text-white mr-2 left"> GREAT HORNED OWL</a>
+                        </div>
 
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Knight"
+                                class=" nav-item nav-link text-white mr-2 left"> KNIGHT</a>
+                        </div>
+
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="https://letmegooglethat.com/?q=moonboat"
+                                class=" nav-item nav-link text-white mr-2 left"> MOONBOAT </a>
+                        </div>
+
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="https://en.wikipedia.org/wiki/Human_spaceflight"
+                                class=" nav-item nav-link text-white mr-2 left"> HUMAN SPACEFLIGHT</a>
+                        </div>
+
+                        <div class="link-background" style="padding-right: 1vw;">
+                            <a style="padding: 0;" href="#" class=" nav-item nav-link text-white mr-2 left">
+                                ROCKETPOOL</a>
+                        </div>
+
+                        <!-- underline go to right? -->
+                    </nav>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2">
 
                     </div>
+                    <div class="col-8">
+                        <div class="d-flex justify-content-left align-items-end"
+                            style="height: 100vh; padding-bottom: 15vh;">
 
+                            <div>
+                                <h5 class="text-white m-2" style="display: block;"> UPCOMING LAUNCH </h5>
+
+                                <h3 class="text-white m-2" style="display: block; font-size: 6vh;"> MARS MISSION </h3>
+
+                                <div class="button-background">
+                                    <a href="#gamecontainer">
+                                        <button class="btn btn-light m-2 below"
+                                            style="background-color: transparent; width: 170px; height: 50px; border-radius: 0;">
+                                            PLAY </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
                 </div>
 
             </div>
-            <div class="col-2"></div>
-        </div>
-
-    </div>
 
 
-    <div class="container-fluid" id="gamecontainer" style="background-color:black;">
-        <div class="row">
-            <div class="col-1 text-white" style="border: solid 1px transparent;"></div>
-            <div class="col-2 text-white" style="border: solid 1px transparent;">
-                <div class="bg-image"></div>
-            </div>            
-            
+            <div class="container-fluid" id="gamecontainer" style="background-color:black;">
+                <div class="row">
+                    <div class="col-1 text-white" style="border: solid 1px transparent;"></div>
+                    <div class="col-2 text-white" style="border: solid 1px transparent;">
+                        <div class="bg-image"></div>
+                    </div>
 
+                    <div class="col-6" id="game">
+                    </div>
 
+                    <div class="col-3 p-1" style="border: solid 1px transparent;">
+                        <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                            <div>
 
-            <div class="col-6" id="game">
-            </div>
-            
+                                <h4><s>Mission Earth</s></h4>
+                                <p style="color: grey;">
+                                    goal: try and land on earth <br>
+                                    ineratia dampeners : disabled <br>
+                                    gravity : enabled <br>
+                                    collisions : disabled <br>
+                                </p>
+                                <h4><s>Mission Mars</s></h4>
+                                <p style="color: grey;">
+                                    goal: try and reach mars <br>
+                                    ineratia dampeners : disabled <br>
+                                    gravity : enabled <br>
+                                    collisions : disabled <br>
+                                </p>
+                                <h4>Mission Explore</h4>
+                                <p style="color: grey;">
+                                    goal: try and go as far as you can <br>
+                                    ineratia dampeners : enabled <br>
+                                    gravity : disabled <br>
+                                    collisions : enabled <br>
+                                </p>
+                            </div>
+                        </div>
 
-
-
-
-                
-
-
-               
-
-
-            <div class="col-3 p-1" style="border: solid 1px transparent;">
-                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
-                    <div>
-
-                        <h4><s>Mission Earth</s></h4>
-                        <p style="color: grey;">
-                            goal: try and land on earth <br>
-                            ineratia dampeners : disabled <br>
-                            gravity : enabled <br>
-                            collisions : disabled <br>
-                        </p>
-                        <h4><s>Mission Mars</s></h4>
-                        <p style="color: grey;">
-                            goal: try and reach mars <br>
-                            ineratia dampeners : disabled <br>
-                            gravity : enabled <br>
-                            collisions : disabled <br>
-                        </p>
-                        <h4>Mission Explore</h4>
-                        <p style="color: grey;">
-                            goal: try and go as far as you can <br>
-                            ineratia dampeners : enabled <br>
-                            gravity : disabled <br>
-                            collisions : enabled <br>
-                        </p>
                     </div>
                 </div>
 
             </div>
-        </div>
-
-    </div>
 
 
 
 
-    <div class="container-fluid" style="background-color:black;">
+            <div class="container-fluid" style="background-color:black;">
 
 
-        <div class="row">
-            
-            <div class="col-2 text-white" >
-                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
-                    <div>
-                        
+                <div class="row">
+
+                    <div class="col-2 text-white">
+                        <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                            <div>
+
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-8">
-                <div class="d-flex justify-content-center align-items-center pb-5 text-white" style="height: 100vh;">
+                    <div class="col-8">
+                        <div class="d-flex justify-content-center align-items-center pb-5 text-white"
+                            style="height: 100vh;">
 
-                    <div style="padding-bottom: 10vh;">
-                        <p style="font-size: 16px; font-family: ddin;"> huh, <br> i am happy that you found this <br>
-                            if you are part of SpaceX and don't like this, tell me <br>
-                            <br>
-                            i did this small project in order to learn more about creating webgames<br>
-                            this is by no means complete let alone bug free <br>
-                            feel free to share this with anyone who might also wants to not only watch but control the webcast<br>
-                            i sincerely hope we all live to witness humans settle on mars <br>
-                            <strong>long live the technoking</strong> 
-                            <br>
-                                <p style="font-family: ddin;"> disclaimer: this is in no way affiliated with SpaceX </p> <br>
+                            <div style="padding-bottom: 10vh;">
+                                <p style="font-size: 16px; font-family: ddin;"> huh, <br> i am happy that you found this
+                                    <br>
+                                    if you are part of SpaceX and don't like this, tell me <br>
+                                    <br>
+                                    i did this small project in order to learn more about creating webgames<br>
+                                    this is by no means complete let alone bug free <br>
+                                    feel free to share this with anyone who might also wants to not only watch but
+                                    control the webcast<br>
+                                    i sincerely hope we all live to witness humans settle on mars <br>
+                                    <strong>long live the technoking</strong>
+                                    <br>
+                                <p style="font-family: ddin;"> disclaimer: this is in no way affiliated with SpaceX </p>
+                                <br>
                                 <p style="font-family: ddin;"> known bugs / issues:
-                                    <div style="font-size: 9pt; font-family: ddin;">
-                                        <li>buggy collisions (including sound)</li>
-                                        <li>very bad hitboxes</li>
-                                        <li>severe performance issues (not optimized at all)</li>
-                                        <li>bad / repeating skins</li>
-                                        <li>improvable sounddesign</li>
-                                        <li>difficulty</li>
-                                    </div>
+                                <div style="font-size: 9pt; font-family: ddin;">
+                                    <li>buggy collisions (including sound)</li>
+                                    <li>very bad hitboxes</li>
+                                    <li>severe performance issues (not optimized at all)</li>
+                                    <li>bad / repeating skins</li>
+                                    <li>improvable sounddesign</li>
+                                    <li>difficulty</li>
+                                </div>
                                 </p>
-                            <br>                        
-                        </p>
+                                <br>
+                                </p>
 
-                        <div>
-                            <div style="float: left; width: fit-content;">
-                                <p style="font-size: 15px; font-family: ddin;">
-                                    credits: <br>
-                                    sound effects from https://www.zapsplat.com <br> textures - me and my sister <br> design - https://www.spacex.com <br> earthpicture - nasa
-                                </p>
+                                <div>
+                                    <div style="float: left; width: fit-content;">
+                                        <p style="font-size: 15px; font-family: ddin;">
+                                            credits: <br>
+                                            sound effects from https://www.zapsplat.com
+                                            <br> design - https://www.spacex.com <br> earthpicture - nasa
+                                        </p>
+                                    </div>
+
+                                    <div style="float: left; width: 7vw; height: 1vw;"> </div>
+
+                                    <div style="float: left;">
+                                        <p style="font-size: 15px; font-family: ddin;">
+                                            contact : robinerd@protonmail.com <br>
+                                            doge goes here : DD2hZqqZayRz75heJxAR8FatjuVFzvLqar <br>
+                                        </p>
+                                    </div>
+                                </div>
+
+
                             </div>
 
-                            <div style="float: left; width: 7vw; height: 1vw;"> </div>
 
-                            <div style="float: left;">
-                                <p style="font-size: 15px; font-family: ddin;">
-                                    contact : robinerd@protonmail.com <br>
-                                    doge goes here : DD2hZqqZayRz75heJxAR8FatjuVFzvLqar <br>
-                                </p>
+                        </div>
+
+                    </div>
+                    <div class="col-2">
+                        <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
+                            <div>
+
                             </div>
                         </div>
 
-                    
-                    </div>
-
-
-                </div>
-
-            </div>
-            <div class="col-2" >
-                <div class="d-flex justify-content-center align-items-center text-white" style="height: 100vh;">
-                    <div>
-                    
                     </div>
                 </div>
 
             </div>
+
+            <footer>
+                <div class="row" style="background-color: black; height: 8vh;">
+                    <div class="mx-auto">
+                        <nav class="navbar navbar-light text-white" role="navigation">
+                            <a class="nav-item nav-link text-white mr-2" href="#">PLEASE</a>
+                            <a class="nav-item nav-link text-white mr-2" href="#">DON'T</a>
+                            <a class="nav-item nav-link text-white mr-2" href="#">SUE</a>
+                            <a class="nav-item nav-link text-white mr-2" href="#">ME</a>
+                            <a class="nav-item nav-link text-white mr-2" href="#">ELON</a>
+                            <!-- maybe add impressum-->
+                        </nav>
+                    </div>
+                </div>
+
+            </footer>
+
         </div>
 
-    </div>
+        <div class="d-md-block d-lg-none">
+            <div class="container-fluid">
+                <div class='row' style="height: 40vh;">
+                    <div class="col-2 my-auto justify-content-center"></div>
+                    <div class="col-8 align-self-end">
+                        <svg version="1.1" id="L3" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100"
+                            enable-background="new 0 0 0 0" xml:space="preserve">
+                            <circle fill="none" stroke="#fff" stroke-width="2" cx="50" cy="50" r="44"
+                                style="opacity:0.1;" />
+                            <circle fill="#f1c40f" cx="50" cy="50" r="5"/>
+                            <circle fill="#3498db" cx="8" cy="54" r="4" style="opacity: 0.85;">
+                                <animateTransform attributeName="transform" dur="10s" type="rotate" from="0 50 48"
+                                    to="360 50 52" repeatCount="indefinite" />
+                            </circle>
+                        </svg>
+                    </div>
+                    <div class="col-2 my-auto justify-content-center"></div>
 
-    <footer>
-        <div class="row" style="background-color: black; height: 8vh;">
-            <div class="mx-auto">
-                <nav class="navbar navbar-light text-white" role="navigation">
-                    <a class="nav-item nav-link text-white mr-2" href="#">PLEASE</a>
-                    <a class="nav-item nav-link text-white mr-2" href="#">DON'T</a>
-                    <a class="nav-item nav-link text-white mr-2" href="#">SUE</a>
-                    <a class="nav-item nav-link text-white mr-2" href="#">ME</a>
-                    <a class="nav-item nav-link text-white mr-2" href="#">ELON</a>
-                    <!-- maybe add impressum-->
-                </nav>
+                </div>
+                <div class="row">
+                    <div class="col-2 my-auto justify-content-center"></div>
+                    <div class="col-8 my-auto justify-content-center">
+                        <h1 style="color: white;">Unfortunately this website does not support your device yet. <span
+                                style="font-family: ddin;">A keyboard and larger screen are required.</span> </h2>
+                    </div>
+                    <div class="col-2 my-auto justify-content-center"></div>
+                </div>
             </div>
         </div>
 
-    </footer>
 
 
 
 
 
 
-</body>
 
-</html>
+
+    </body>
+
+    </html>

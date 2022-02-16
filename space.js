@@ -37,7 +37,7 @@ class mainScene {
     //TODO check performance / lagg? remove clouds and planes?
 
     // ================= OTHER
-    //TODO replace skins with selfmade skins (rocket, blackbird, spacetesla, boringmachine)
+    //TODO replace skins (rocket, blackbird, spacetesla, boringmachine)
     //better ground building skins
     //change overlay (dont display "mars" in explore mode, what for?)
     //add idle sound (at ground, not starting, thrust 0 (zischen?))

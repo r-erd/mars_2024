@@ -3,7 +3,7 @@ var arcade = true //switches the acceleration / speed system and the mars-existe
 var frameTime = 0;
 var gameTick = 0;
 var DEBUG = false;
-var muted = true;
+var muted = false;
 
 var speaker;
 var speaker_muted;

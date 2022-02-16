@@ -3,6 +3,10 @@ var arcade = true //switches the acceleration / speed system and the mars-existe
 var frameTime = 0;
 var gameTick = 0;
 var DEBUG = false;
+var muted = true;
+
+var speaker;
+var speaker_muted;
 
 class mainScene {
 
@@ -77,6 +81,8 @@ class mainScene {
       this.load.image('mars', 'assets/mars.png');
       this.load.image('plane1-left', 'assets/plane1-left.png');
       this.load.image('plane2-right', 'assets/plane2-right.png');
+      this.load.image('speaker', 'assets/speaker.png');
+      this.load.image('speaker-muted', 'assets/speaker-muted.png');
 
       this.load.image('plane3-left-green', 'assets/plane3-left-green.png');
       this.load.image('plane3-left-blue', 'assets/plane3-left-blue.png');
@@ -98,9 +104,6 @@ class mainScene {
         console.log("small")
       }
       */
-
-
-
 
 
 
@@ -138,9 +141,21 @@ class mainScene {
       this.physics.add.existing(this.background, true);
       this.background = this.add.tileSprite(600, 420, 1250, 850, 'light');
 
+
+
       this.floor = this.physics.add.sprite(600, 715, 'floor');
       this.overlay = this.add.sprite(600, 400, 'overlay');
       this.overlay.setDepth(4)
+
+      speaker = this.physics.add.sprite(1180, 20, 'speaker')
+      speaker.setDepth(4);
+      speaker.setInteractive()
+
+      speaker_muted = this.physics.add.sprite(1180, 20, 'speaker-muted')
+      speaker_muted.setDepth(4);
+      speaker_muted.setInteractive() 
+      this.input.on('gameobjectdown', this.toggleVolume);
+
       
       this.cursor = this.add.sprite(600, 933, 'cursor');
       this.cursor.setOrigin(0,17);
@@ -174,6 +189,23 @@ class mainScene {
       this.spaceshipSound = this.sound.add('spaceshipSound', audioConfig);
       this.airHiss = this.sound.add('airHiss', audioConfig);
       this.explosionSound = this.sound.add('explosionSound');
+
+      if (muted) {
+        speaker.setVisible(false);
+        speaker_muted.setVisible(true)
+        this.boosterSound.setMute(true)
+        this.explosionSound.setMute(true)
+        this.spaceshipSound.setMute(true)
+        this.airHiss.setMute(true)
+      } else {
+        speaker.setVisible(true)
+        speaker_muted.setVisible(false)
+        this.boosterSound.setMute(false)
+        this.explosionSound.setMute(false)
+        this.spaceshipSound.setMute(false)
+        this.airHiss.setMute(false)
+      }
+
       this.explosionSound.setVolume(0.025); 
       this.airHiss.setVolume(0.02)
       this.airHiss.play()
@@ -455,7 +487,7 @@ class mainScene {
       ///garbage collection (far away asteroids)
       this.asteroids.children.each( function(p){
         if(p.y > 1700 && p.active){
-          console.log("killed asteroid")
+          //console.log("killed asteroid")
           p.setActive(false)
           p.setVisible(false)
         }
@@ -472,16 +504,6 @@ class mainScene {
         this.checkAirspaceBounds()
         this.setDustEmitterCheck()
         this.blackbirdEgg()
-
-        if(this.airHiss.isPlaying && this.thrust != 0){
-          this.tweens.add({
-            targets:  this.airHiss,
-            volume:   0,
-            duration: 3000
-          });
-          
-          this.time.delayedCall(3000, ()=>{this.airHiss.stop()}, null, this);
-        }
 
         if((this.distanceY > 0.5 && this.fog == true) || this.thrust != 0 ){
           this.o2_emitter.stop()
@@ -699,6 +721,17 @@ class mainScene {
       this.createSpaceObstacle(yCoord, xCoord)
     }
 
+    toggleVolume() {
+      muted = !muted;
+      if (muted) {
+        speaker.setVisible(false);
+        speaker_muted.setVisible(true);
+      } else {
+        speaker.setVisible(true);
+        speaker_muted.setVisible(false);
+      }
+    }
+
     addObstacleRightRandLoc(){
       let yCoord = Math.floor(this.lookup() * 900)
       let xCoord = Math.floor(this.lookup() *300 ) + 1250;
@@ -720,7 +753,7 @@ class mainScene {
       this.refreshVelocity(0,0)
 
       this.alive = false;
-      console.log("hit something!")
+      //console.log("hit something!")
 
 
       this.spaceshipSound.stop()
@@ -766,18 +799,18 @@ class mainScene {
       if(this.dust == true){
         let grav = this.rocket.angle/-90 * 200
         this.dust_emitter.setGravityX(grav)
-        console.log(this.rocket.angle)
+        //console.log(this.rocket.angle)
       }
 
       if ((this.distanceY > 0.6 || this.thrust == 0 || Math.abs(this.rocket.angle) > 70 ) && this.dust == true ) {
-        console.log("disabled dust")
+        //console.log("disabled dust")
         this.dust_emitter.on = false;
         this.gdust_emitter.on = false;
         this.dust = false
       }
 
       if((this.distanceY < 0.8 && this.thrust != 0 && Math.abs(this.rocket.angle) < 70) && this.dust == false){
-        console.log("enabled dust")
+        //console.log("enabled dust")
         this.dust_emitter.on = true;
         this.gdust_emitter.on = true;
         this.dust = true
@@ -791,7 +824,7 @@ class mainScene {
 
       if(this.distanceY > 30 && this.distanceY < 40 && this.eggOne == false && Math.random() < 0.001){
         this.blackbird = this.physics.add.sprite(1300, 0, 'blackbird');
-        console.log("spawned blackbird")
+        //console.log("spawned blackbird")
         this.blackbird.body.velocity.x = -300
         this.blackbird.body.velocity.y = this.speedY
         this.eggOne = true
@@ -805,7 +838,7 @@ class mainScene {
         this.asteroids.add(this.spacetesla)
         this.spacetesla.body.velocity.y = this.speedY 
         this.spacetesla.body.velocity.x = this.speedX
-        console.log("spawned spacetesla")
+        //console.log("spawned spacetesla")
         this.eggTwo = true
       }
 
@@ -975,7 +1008,7 @@ class mainScene {
         let size = this.lookup();
 
           if (size < 0.5){
-            console.log("spawned planes " + xCoord +" " + yCoord)
+            //("spawned planes " + xCoord +" " + yCoord)
 
               //add the smaller plane here....
             if(direction < 0.5){
@@ -1011,7 +1044,7 @@ class mainScene {
             this.plane1.setDepth(1)
 
           } else {
-            console.log("spawned planes " + xCoord +" " + yCoord)
+            //console.log("spawned planes " + xCoord +" " + yCoord)
 
             if(direction < 0.5){
 
@@ -1175,7 +1208,7 @@ class mainScene {
       if(this.positionYnew % 5 == 0 && this.positionYnew != this.positionYold ){ 
         //better save the values already visited and check if in the list
           this.positionYold = this.positionYnew
-          console.log("added top ast")
+          //console.log("added top ast")
           this.addSomeTopAsteroids()        
       }
     }
@@ -1185,7 +1218,7 @@ class mainScene {
       if(this.positionXnew % 5 == 0 && this.positionXnew != this.positionXold && this.distanceY >5 ){ 
         //better save the values already visited and check if in the list
           this.positionXold = this.positionXnew
-          console.log("added right ast")
+          //console.log("added right ast")
           this.addSomeRightAsteroids()     
           this.addSomeLeftAsteroids()   
       }
@@ -1220,6 +1253,33 @@ class mainScene {
     }
 
     soundManager(){
+
+      if(muted){
+        this.boosterSound.setMute(true)
+        this.explosionSound.setMute(true)
+        this.spaceshipSound.setMute(true)
+        this.airHiss.setMute(true)
+        return
+      } else {
+        this.boosterSound.setMute(false)
+        this.explosionSound.setMute(false)
+        this.spaceshipSound.setMute(false)
+        this.airHiss.setMute(false)
+      }
+
+      if(this.airHiss.isPlaying && this.thrust != 0){
+        this.tweens.add({
+          targets:  this.airHiss,
+          volume:   0,
+          duration: 3000
+        });
+        
+        this.time.delayedCall(3000, ()=>{this.airHiss.stop()}, null, this);
+      }
+
+      this.spaceshipSound.volume = 0.03
+      this.explosionSound.volume = 0.03
+
 
       if (this.thrust == 0)
         this.boosterSound.volume = 0
